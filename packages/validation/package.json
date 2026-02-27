@@ -1,0 +1,21 @@
+{
+  "name": "@jvrecipes/validation",
+  "version": "0.0.0",
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "tsc --noEmit --watch",
+    "build": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module",
+  "dependencies": {
+    "arktype": "^2.1.29"
+  }
+}

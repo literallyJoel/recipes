@@ -1,0 +1,27 @@
+{
+  "name": "@jvrecipes/web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jvrecipes/validation": "workspace:*",
+    "better-auth": "^1.4.19",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^4.7.0",
+    "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3"
+  }
+}
