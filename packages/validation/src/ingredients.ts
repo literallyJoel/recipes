@@ -57,7 +57,7 @@ export const IngredientSchema = type({
   "packageSize?": "number",
   "packageUnit?": "string",
   "url?": "string.url",
-  nutrition: IngredientNutritionSchema,
+  nutrition: IngredientNutritionSchema.optional(),
 }).and(ServerGeneratedFields);
 
 export const UpdateIngredientInputSchema =
