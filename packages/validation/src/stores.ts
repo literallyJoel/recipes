@@ -1,15 +1,15 @@
 import { type } from "arktype";
-import { ServerGeneratedFields } from "./common";
+import { serverGeneratedFields } from "./common";
 
-export const CreateStoreInputSchema = type({
+export const createStoreSchema = type({
   name: "string",
   "logoUrl?": "string.url",
 });
 
-export const StoreSchema = CreateStoreInputSchema.and(ServerGeneratedFields);
+export const storeSchema = createStoreSchema.and(serverGeneratedFields);
 
-export const UpdateStoreInputSchema = CreateStoreInputSchema.partial();
+export const updateStoreSchema = createStoreSchema.partial();
 
-export type CreateStoreInput = typeof CreateStoreInputSchema.infer;
-export type UpdateStoreInput = typeof UpdateStoreInputSchema.infer;
-export type Store = typeof StoreSchema.infer;
+export type CreateStoreInput = typeof createStoreSchema.infer;
+export type UpdateStoreInput = typeof updateStoreSchema.infer;
+export type Store = typeof storeSchema.infer;

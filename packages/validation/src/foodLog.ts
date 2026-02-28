@@ -1,56 +1,43 @@
 import { type } from "arktype";
-import { ServerGeneratedFields } from "./common";
-import { MealTypeSchema, RecipeSchema } from "./recipes";
-import { IngredientSchema } from "./ingredients";
-import { NutritionSnapshotSchema } from "./nutrition";
+import { mealTypeSchema, serverGeneratedFields, stubSchema } from "./common";
+import { userSchema } from "./users";
+import { recipeSchema } from "./recipes";
+import { ingredientSchema } from "./ingredients";
 
-const FoodLogEntrySourceSchema = type({
-  recipeId: "string.uuid",
-  "ingredientId?": "never",
-})
-  .or({ ingredientId: "string.uuid", "recipeId?": "never" })
-  .or({
-    "recipeId?": "never",
-    "ingredientId?": "never",
-  });
-
-const FoodLogEntryBaseInputSchema = type({
-  "mealPlanEntryId?": "string.uuid",
-  date: "Date",
-  "mealType?": MealTypeSchema,
-  loggedAt: "Date",
-  "servings?": "number > 0",
-  "quantity?": "number > 0",
-  "quantityUnit?": "string",
-  "label?": "string",
-  "nutritionSnapshot?": NutritionSnapshotSchema,
-});
-
-export const CreateFoodLogEntryInputSchema = FoodLogEntryBaseInputSchema.and(
-  FoodLogEntrySourceSchema,
-);
-
-const FoodLogEntrySourceExpandedSchema = type({
-  recipe: RecipeSchema,
+const foodLogSourceSchema = type({
+  recipe: stubSchema(recipeSchema),
   "ingredient?": "never",
 })
-  .or({ ingredient: IngredientSchema, "recipe?": "never" })
+  .or({
+    ingredient: stubSchema(ingredientSchema),
+    "recipe?": "never",
+  })
   .or({
     "recipe?": "never",
     "ingredient?": "never",
   });
 
-export const FoodLogEntrySchema = FoodLogEntryBaseInputSchema.and(
-  FoodLogEntrySourceExpandedSchema,
-)
-  .and(ServerGeneratedFields)
-  .and(type({ userId: "string.uuid" }));
+const foodLogEntryBaseSchema = type({
+  user: stubSchema(userSchema),
+  date: "Date",
+  mealType: mealTypeSchema,
+  loggedAt: "Date",
+  "servings?": "number > 0",
+  "quantity?": "number > 0",
+  "quantityUnit?": "string",
+  "label?": "string",
+  "nutritionSnapshot?": "string.json",
+});
 
-export const UpdateFoodLogEntryInputSchema =
-  CreateFoodLogEntryInputSchema.partial();
+export const createFoodLogEntrySchema = foodLogEntryBaseSchema.and(
+  foodLogSourceSchema,
+);
 
-export type CreateFoodLogEntryInput =
-  typeof CreateFoodLogEntryInputSchema.infer;
-export type UpdateFoodLogEntryInput =
-  typeof UpdateFoodLogEntryInputSchema.infer;
-export type FoodLogEntry = typeof FoodLogEntrySchema.infer;
+export const updateFoodLogEntrySchema = createFoodLogEntrySchema.partial();
+export const foodLogEntrySchema = createFoodLogEntrySchema.and(
+  serverGeneratedFields,
+);
+
+export type CreateFoodLogEntry = typeof createFoodLogEntrySchema.infer;
+export type UpdateFoodLogEntry = typeof updateFoodLogEntrySchema.infer;
+export type FoodLogEntry = typeof foodLogEntrySchema.infer;

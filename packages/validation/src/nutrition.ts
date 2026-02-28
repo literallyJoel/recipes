@@ -1,42 +1,26 @@
 import { type } from "arktype";
-import { ServerGeneratedFields } from "./common";
+import { serverGeneratedFields, stubSchema } from "./common";
+import { userSchema } from "./users";
 
-export const NutritionValuesSchema = type({
-  "energy?": "number",
-  "fat?": "number",
-  "saturates?": "number",
-  "carbohydrates?": "number",
-  "sugars?": "number",
-  "fibre?": "number",
-  "protein?": "number",
-  "salt?": "number",
-});
-
-export const NutritionSnapshotSchema = type({
-  perServing: NutritionValuesSchema,
-});
-
-export const CreateNutritionalTargetInputSchema = type({
+export const createNutritionalTargetSchema = type({
   label: "string",
+  user: stubSchema(userSchema),
   "calories?": "number",
-  "proteinG?": "number",
-  "carbsG?": "number",
-  "fatG?": "number",
-  "fibreG?": "number",
+  "protein?": "number",
+  "carbs?": "number",
+  "fat?": "number",
+  "fibre?": "number",
   isDefault: "boolean",
 });
 
-export const NutritionalTargetSchema = CreateNutritionalTargetInputSchema.and(
-  ServerGeneratedFields,
-).and(type({ userId: "string.uuid" }));
+export const updateNutritionalTargetSchema =
+  createNutritionalTargetSchema.partial();
 
-export const UpdateNutritionalTargetInputSchema =
-  CreateNutritionalTargetInputSchema.partial();
+export const nutritionalTargetSchema = createNutritionalTargetSchema.and(
+  serverGeneratedFields,
+);
 
-export type NutritionValues = typeof NutritionValuesSchema.infer;
-export type NutritionSnapshot = typeof NutritionSnapshotSchema.infer;
-export type CreateNutritionalTargetInput =
-  typeof CreateNutritionalTargetInputSchema.infer;
-export type UpdateNutritionalTargetInput =
-  typeof UpdateNutritionalTargetInputSchema.infer;
-export type NutritionalTarget = typeof NutritionalTargetSchema.infer;
+export type CreateNutritionalTarget =
+  typeof createNutritionalTargetSchema.infer;
+export type UpdateNutritionalTarget = typeof updateNutritionalTargetSchema.infer;
+export type NutritionalTarget = typeof nutritionalTargetSchema.infer;
