@@ -1,26 +1,41 @@
 import { type } from "arktype";
-import { MealType, ServerGeneratedFields, stubSchema } from "./common";
+import { mealTypeSchema, serverGeneratedFields, stubSchema } from "./common";
 import { userSchema } from "./users";
 import { recipeSchema } from "./recipes";
-import { IngredientSchema } from "./ingredients";
+import { ingredientSchema } from "./ingredients";
 
-export const createFoodLogEntrySchema = type({
+const foodLogSourceSchema = type({
+  recipe: stubSchema(recipeSchema),
+  "ingredient?": "never",
+})
+  .or({
+    ingredient: stubSchema(ingredientSchema),
+    "recipe?": "never",
+  })
+  .or({
+    "recipe?": "never",
+    "ingredient?": "never",
+  });
+
+const foodLogEntryBaseSchema = type({
   user: stubSchema(userSchema),
   date: "Date",
-  mealType: MealType,
+  mealType: mealTypeSchema,
   loggedAt: "Date",
-  "recipe?": stubSchema(recipeSchema),
-  "ingredient?": stubSchema(IngredientSchema),
-  "servings?": "number.integer",
-  "quantity?": "number",
+  "servings?": "number.integer > 0",
+  "quantity?": "number > 0",
   "quantityUnit?": "string",
   "label?": "string",
   "nutritionSnapshot?": "string.json",
 });
 
+export const createFoodLogEntrySchema = foodLogEntryBaseSchema.and(
+  foodLogSourceSchema,
+);
+
 export const updateFoodLogEntrySchema = createFoodLogEntrySchema.partial();
 export const foodLogEntrySchema = createFoodLogEntrySchema.and(
-  ServerGeneratedFields,
+  serverGeneratedFields,
 );
 
 export type CreateFoodLogEntry = typeof createFoodLogEntrySchema.infer;

@@ -1,24 +1,24 @@
 import { type } from "arktype";
-import { ServerGeneratedFields, stubSchema } from "./common";
-import { IngredientSchema } from "./ingredients";
+import { serverGeneratedFields, stubSchema } from "./common";
+import { ingredientSchema } from "./ingredients";
 import { userSchema } from "./users";
 
 export const createRecipeSchema = type({
   title: "string",
   "description?": "string",
   "instructions?": "string",
-  servings: "number.integer",
-  "prepMins?": "number.integer",
-  "cookMins?": "number.integer",
+  servings: "number.integer > 0",
+  "prepMins?": "number.integer >= 0",
+  "cookMins?": "number.integer >= 0",
   isPublic: "boolean",
 });
 
 export const updateRecipeSchema = createRecipeSchema.partial();
 
 export const recipeSchema = createRecipeSchema
-  .and(ServerGeneratedFields)
+  .and(serverGeneratedFields)
   .and({ user: { id: "string" } })
-  .and({ "ingredients?": IngredientSchema.array() });
+  .and({ "ingredients?": ingredientSchema.array() });
 
 export const sharedRecipeSchema = recipeSchema.and({
   sharedByUser: stubSchema(userSchema),

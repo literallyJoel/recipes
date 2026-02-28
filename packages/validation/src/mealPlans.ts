@@ -1,7 +1,7 @@
 import { type } from "arktype";
-import { MealType, ServerGeneratedFields, stubSchema } from "./common";
+import { mealTypeSchema, serverGeneratedFields, stubSchema } from "./common";
 import { userSchema } from "./users";
-import { StoreSchema } from "./stores";
+import { storeSchema } from "./stores";
 import { nutritionalTargetSchema } from "./nutrition";
 import { recipeSchema } from "./recipes";
 
@@ -11,13 +11,13 @@ export const createMealPlanSchema = type({
   endDate: "Date",
   config: "string.json",
   user: stubSchema(userSchema),
-  "store?": stubSchema(StoreSchema),
+  "store?": stubSchema(storeSchema),
   "nutritionalTarget?": stubSchema(nutritionalTargetSchema),
 });
 
 export const updateMealPlanSchema = createMealPlanSchema.partial();
 
-export const mealPlanSchema = createMealPlanSchema.and(ServerGeneratedFields);
+export const mealPlanSchema = createMealPlanSchema.and(serverGeneratedFields);
 
 export type CreateMealPlan = typeof createMealPlanSchema.infer;
 export type UpdateMealPlan = typeof updateMealPlanSchema.infer;
@@ -27,7 +27,7 @@ export const createMealPlanEntrySchema = type({
   mealPlan: stubSchema(mealPlanSchema),
   recipe: stubSchema(recipeSchema),
   date: "Date",
-  mealType: MealType,
+  mealType: mealTypeSchema,
   servings: "number.integer>0",
   order: "number.integer",
   nutritionSnapshot: "string.json",

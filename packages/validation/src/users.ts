@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { ServerGeneratedFields } from "./common";
+import { serverGeneratedFields } from "./common";
 
 export const userSchema = type({
   id: "string",
@@ -7,7 +7,7 @@ export const userSchema = type({
   email: "string.email",
   emailVerified: "boolean",
   "image?": "string.url",
-}).and(ServerGeneratedFields.omit("id"));
+}).and(serverGeneratedFields.omit("id"));
 
 export const sessionSchema = type({
   id: "string",
@@ -21,7 +21,7 @@ export const sessionSchema = type({
 export const accountSchema = type({
   id: "string",
   accountId: "string",
-  provierId: "string",
+  providerId: "string",
   userId: "string",
   "accessToken?": "string",
   "refreshToken?": "string",
@@ -29,14 +29,14 @@ export const accountSchema = type({
   "refreshTokenExpiresAt?": "Date",
   "scope?": "string",
   "password?": "string",
-}).and(ServerGeneratedFields.omit("id"));
+}).and(serverGeneratedFields.omit("id"));
 
 export const verificationSchema = type({
   id: "string",
   identifier: "string",
   value: "string",
   expiresAt: "Date",
-}).and(ServerGeneratedFields.omit("id"));
+}).and(serverGeneratedFields.omit("id"));
 
 export type User = typeof userSchema.infer;
 export type Session = typeof sessionSchema.infer;

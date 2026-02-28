@@ -1,6 +1,6 @@
 import { Type, type } from "arktype";
 
-export const ServerGeneratedFields = type({
+export const serverGeneratedFields = type({
   id: "string.uuid",
   createdAt: "Date",
   updatedAt: "Date",
@@ -20,4 +20,6 @@ export function stubSchema<T extends { id: unknown }>(schema: Type<T>) {
   >;
 }
 
-export const MealType = type("'breakfast' | 'lunch' | 'dinner' | 'snack' | 'drink'");
+export const mealTypeSchema = type(
+  "'breakfast' | 'lunch' | 'dinner' | 'snack' | 'drink'",
+);
