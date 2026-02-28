@@ -1,53 +1,44 @@
 import { type } from "arktype";
-import { ServerGeneratedFields } from "./common";
-import { MealTypeSchema, RecipeSchema } from "./recipes";
-import { NutritionSnapshotSchema } from "./nutrition";
+import { MealType, ServerGeneratedFields, stubSchema } from "./common";
+import { userSchema } from "./users";
+import { StoreSchema } from "./stores";
+import { nutritionalTargetSchema } from "./nutrition";
+import { recipeSchema } from "./recipes";
 
-export const CreateMealPlanInputSchema = type({
-    "nutritionalTargetId?": "string.uuid",
-    "storeId?": "string.uuid",
-    "label?": "string",
-    startDate: "Date",
-    endDate: "Date",
-    config: "object"
+export const createMealPlanSchema = type({
+  label: "string",
+  startDate: "Date",
+  endDate: "Date",
+  config: "string.json",
+  user: stubSchema(userSchema),
+  "store?": stubSchema(StoreSchema),
+  "nutritionalTarget?": stubSchema(nutritionalTargetSchema),
 });
 
-export const MealPlanSchema = CreateMealPlanInputSchema.and(
-    ServerGeneratedFields
-).and(type({ userId: "string.uuid" }));
+export const updateMealPlanSchema = createMealPlanSchema.partial();
 
-export const UpdateMealPlanInputSchema = CreateMealPlanInputSchema.partial();
+export const mealPlanSchema = createMealPlanSchema.and(ServerGeneratedFields);
 
-export type CreateMealPlanInput = typeof CreateMealPlanInputSchema.infer;
-export type UpdateMealPlanInput = typeof UpdateMealPlanInputSchema.infer;
-export type MealPlan = typeof MealPlanSchema.infer;
+export type CreateMealPlan = typeof createMealPlanSchema.infer;
+export type UpdateMealPlan = typeof updateMealPlanSchema.infer;
+export type MealPlan = typeof mealPlanSchema.infer;
 
-export const CreateMealPlanEntryInputSchema = type({
-    mealPlanId: "string.uuid",
-    recipeId: "string.uuid",
-    date: "Date",
-    mealType: MealTypeSchema,
-    servings: "number.integer >= 1",
-    order: "number.integer >= 0",
-    "nutritionSnapshot?": NutritionSnapshotSchema
+export const createMealPlanEntrySchema = type({
+  mealPlan: stubSchema(mealPlanSchema),
+  recipe: stubSchema(recipeSchema),
+  date: "Date",
+  mealType: MealType,
+  servings: "number.integer>0",
+  order: "number.integer",
+  nutritionSnapshot: "string.json",
 });
 
-export const MealPlanEntrySchema = type({
-    id: "string.uuid",
-    mealPlanId: "string.uuid",
-    recipe: RecipeSchema,
-    date: "Date",
-    mealType: MealTypeSchema,
-    servings: "number.integer >= 1",
-    order: "number.integer >= 0",
-    "nutritionSnapshot?": NutritionSnapshotSchema
+export const updateMealPlanEntrySchema = createMealPlanEntrySchema.partial();
+
+export const mealPlanEntrySchema = createMealPlanEntrySchema.and({
+  id: "string.uuid",
 });
 
-export const UpdateMealPlanEntryInputSchema =
-    CreateMealPlanEntryInputSchema.partial();
-
-export type CreateMealPlanEntryInput =
-    typeof CreateMealPlanEntryInputSchema.infer;
-export type UpdateMealPlanEntryInput =
-    typeof UpdateMealPlanEntryInputSchema.infer;
-export type MealPlanEntry = typeof MealPlanEntrySchema.infer;
+export type CreateMealPlanEntry = typeof createMealPlanEntrySchema.infer;
+export type UpdateMealPlanEntry = typeof updateMealPlanEntrySchema.infer;
+export type MealPlanEntry = typeof mealPlanEntrySchema.infer;

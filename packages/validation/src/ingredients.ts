@@ -1,68 +1,54 @@
 import { type } from "arktype";
-import { ServerGeneratedFields } from "./common";
 import { StoreSchema } from "./stores";
+import { ServerGeneratedFields, stubSchema } from "./common";
 
-export const CreateIngredientTagInputSchema = type({
+// Ingredient Tags
+export const createIngrientTagSchema = type({
   name: "string",
 });
 
-export const IngredientTagSchema = CreateIngredientTagInputSchema.and(
+export const updateIngredientTagSchema = createIngrientTagSchema.partial();
+
+export const ingredientTagSchema = createIngrientTagSchema.and(
   ServerGeneratedFields,
 );
 
-export const UpdateIngredientTagInputSchema =
-  CreateIngredientTagInputSchema.partial();
+export type CreateIngredientTag = typeof createIngrientTagSchema.infer;
+export type updateIngredientTag = typeof updateIngredientTagSchema.infer;
+export type IngredientTag = typeof ingredientTagSchema.infer;
 
-export type CreateIngredientTagInput =
-  typeof CreateIngredientTagInputSchema.infer;
-export type UpdateIngredientTagInput =
-  typeof UpdateIngredientTagInputSchema.infer;
-export type IngredientTag = typeof IngredientTagSchema.infer;
+// Ingredients
 
-export const IngredientNutritionSchema = type({
-  baseUnit: "string",
-  "customUnitDefinition?": "string",
-  "energyPerBaseUnit?": "number",
-  "fatPerBaseUnit?": "number",
-  "saturatesPerBaseUnit?": "number",
-  "carbohydratesPerBaseUnit?": "number",
-  "sugarsPerBaseUnit?": "number",
-  "fibrePerBaseUnit?": "number",
-  "proteinPerBaseUnit?": "number",
-  "saltPerBaseUnit?": "number",
-});
+export const ingredientNutritionSchema = type({
+  energy: "number",
+  fat: "number",
+  saturates: "number",
+  carbohydrates: "number",
+  sugars: "number",
+  fibre: "number",
+  protein: "number",
+  salt: "number",
+}).partial();
 
-export type IngredientNutrition = typeof IngredientNutritionSchema.infer;
-
-export const CreateIngredientInputSchema = type({
-  "storeId?": "string.uuid",
-  "ingredientTagId?": "string.uuid",
+export const createIngredientSchema = type({
   name: "string",
   brand: "string",
-  "priceAmount?": "number",
-  priceCurrency: "string == 3",
+  "store?": stubSchema(StoreSchema),
+  "ingredientTag?": stubSchema(ingredientTagSchema),
+  "priceAmount?": "number.integer",
+  "priceCurrency?": "string == 3",
   "packageSize?": "number",
-  "packageUnit?": "string",
   "url?": "string.url",
-  nutrition: IngredientNutritionSchema.optional(),
+  "nutrition?": ingredientNutritionSchema,
 });
 
-export const IngredientSchema = type({
-  "store?": StoreSchema,
-  "ingredientTag?": IngredientTagSchema,
-  name: "string",
-  brand: "string",
-  "priceAmount?": "number",
-  priceCurrency: "string == 3",
-  "packageSize?": "number",
-  "packageUnit?": "string",
-  "url?": "string.url",
-  nutrition: IngredientNutritionSchema.optional(),
-}).and(ServerGeneratedFields);
+export const updateIngredientSchema = createIngredientSchema.partial();
 
-export const UpdateIngredientInputSchema =
-  CreateIngredientInputSchema.partial();
+export const IngredientSchema = createIngrientTagSchema.and(
+  ServerGeneratedFields,
+);
 
-export type CreateIngredientInput = typeof CreateIngredientInputSchema.infer;
-export type UpdateIngredientInput = typeof UpdateIngredientInputSchema.infer;
+export type IngredientNutrition = typeof ingredientNutritionSchema.infer;
+export type CreateIngredient = typeof createIngredientSchema.infer;
+export type UpdateIngredient = typeof updateIngredientSchema.infer;
 export type Ingredient = typeof IngredientSchema.infer;
