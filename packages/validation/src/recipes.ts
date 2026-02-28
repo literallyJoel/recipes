@@ -7,7 +7,7 @@ export const createRecipeSchema = type({
   title: "string",
   "description?": "string",
   "instructions?": "string",
-  servings: "number.integer > 0",
+  servings: "number > 0",
   "prepMins?": "number.integer >= 0",
   "cookMins?": "number.integer >= 0",
   isPublic: "boolean",
@@ -17,7 +17,7 @@ export const updateRecipeSchema = createRecipeSchema.partial();
 
 export const recipeSchema = createRecipeSchema
   .and(serverGeneratedFields)
-  .and({ user: { id: "string" } })
+  .and({ user: stubSchema(userSchema) })
   .and({ "ingredients?": ingredientSchema.array() });
 
 export const sharedRecipeSchema = recipeSchema.and({

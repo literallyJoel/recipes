@@ -22,7 +22,7 @@ const foodLogEntryBaseSchema = type({
   date: "Date",
   mealType: mealTypeSchema,
   loggedAt: "Date",
-  "servings?": "number.integer > 0",
+  "servings?": "number > 0",
   "quantity?": "number > 0",
   "quantityUnit?": "string",
   "label?": "string",

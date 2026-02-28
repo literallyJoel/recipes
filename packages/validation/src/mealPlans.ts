@@ -28,7 +28,7 @@ export const createMealPlanEntrySchema = type({
   recipe: stubSchema(recipeSchema),
   date: "Date",
   mealType: mealTypeSchema,
-  servings: "number.integer>0",
+  servings: "number > 0",
   order: "number.integer",
   nutritionSnapshot: "string.json",
 });

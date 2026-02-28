@@ -13,7 +13,7 @@ export const createNutritionalTargetSchema = type({
   isDefault: "boolean",
 });
 
-export const updateNutritionTargetSchema =
+export const updateNutritionalTargetSchema =
   createNutritionalTargetSchema.partial();
 
 export const nutritionalTargetSchema = createNutritionalTargetSchema.and(
@@ -22,5 +22,5 @@ export const nutritionalTargetSchema = createNutritionalTargetSchema.and(
 
 export type CreateNutritionalTarget =
   typeof createNutritionalTargetSchema.infer;
-export type UpdateNutritionalTarget = typeof updateNutritionTargetSchema.infer;
+export type UpdateNutritionalTarget = typeof updateNutritionalTargetSchema.infer;
 export type NutritionalTarget = typeof nutritionalTargetSchema.infer;
