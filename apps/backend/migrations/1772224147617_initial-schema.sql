@@ -64,7 +64,7 @@ create table "recipes" (
   "title"        text not null,
   "description"  text,
   "instructions" text,
-  "servings"     numeric(8, 3) not null default 1,
+  "servings"     numeric(8, 3) not null default 1 check ("servings" > 0),
   "prepMins"     integer,
   "cookMins"     integer,
   "isPublic"     boolean not null default false,
