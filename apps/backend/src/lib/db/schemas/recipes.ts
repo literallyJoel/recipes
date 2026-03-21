@@ -8,9 +8,9 @@ export const recipeDBRowSchema = type({
   "instructions?": "string",
   "servings?": "number>0",
   "prepMins?": "number.integer",
-  "cookMins>": "number.integer",
+  "cookMins?": "number.integer",
   isPublic: "boolean",
-  deletedAt: "string",
+  "deletedAt?": "string | null",
   createdAt: "string",
   updatedAt: "string",
 });

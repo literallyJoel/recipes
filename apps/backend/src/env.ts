@@ -8,7 +8,8 @@ const env = arkenv({
   GOOGLE_CLIENT_SECRET: "string",
   REDIS_URL: "string",
   NODE_ENV: "'development' | 'produciton' | 'test' = 'development'",
-  BETTER_AUTH_LOG_LEVEL: "'debug' | 'info' | 'warn' | 'error' = 'info'"
+  BETTER_AUTH_LOG_LEVEL: "'debug' | 'info' | 'warn' | 'error' = 'info'",
+  ENABLE_CACHE: "boolean = false"
 });
 
 export default env;

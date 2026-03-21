@@ -5,6 +5,7 @@ export * from "./mealPlanEntries";
 export * from "./mealPlans";
 export * from "./nutritionalTargets";
 export * from "./recipeIngredients";
+export * from "./recipes";
 export * from "./recipeIngredients";
 export * from "./sharedRecipes";
 export * from "./stores";

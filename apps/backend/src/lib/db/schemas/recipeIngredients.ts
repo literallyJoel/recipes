@@ -6,7 +6,7 @@ export const recipeIngredientDbRowSchema = type({
   ingredientId: "string.uuid",
   quantity: "number",
   quantityUnit: "string",
-  "notes?": "string",
+  "notes?": "string | null",
   order: "number.integer",
 });
 
