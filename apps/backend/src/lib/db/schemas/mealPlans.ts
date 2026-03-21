@@ -3,9 +3,9 @@ import { type } from "arktype";
 export const mealPlanDbRowSchema = type({
   id: "string.uuid",
   userId: "string",
-  "nutritionalTargetId?": "string.uuid",
-  "storedId?": "string.uuid",
-  "label?": "string",
+  "nutritionalTargetId?": "string.uuid | null",
+  "storedId?": "string.uuid | null",
+  "label?": "string | null",
   startDate: "string.date",
   endDate: "string.date",
   config: "string.json",

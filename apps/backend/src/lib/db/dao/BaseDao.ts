@@ -1,0 +1,188 @@
+import type { Type } from "arktype";
+import { type DatabaseClient, type DbRow, queryDb } from "../client";
+import {
+  buildInsertClause,
+  buildLimitOffsetClause,
+  buildOrderByClause,
+  buildSetClause,
+  buildWhereClause,
+  type DbScalar,
+  quoteIdentifier,
+  type DbColumn,
+  type DeleteOptions,
+  type FindManyOptions,
+} from "../sql";
+
+export type BaseDaoConfig<
+  TRow extends DbRow,
+  TEntity,
+  TCreateInput,
+  TUpdateInput,
+  TPrimaryKey extends DbColumn<TRow>,
+> = {
+  table: string;
+  primaryKey: TPrimaryKey;
+  rowSchema: Type<TRow>;
+  defaultOrderBy?: FindManyOptions<TRow>["orderBy"];
+  createPrimaryKey?: () => TRow[TPrimaryKey];
+  fromRow: (row: TRow) => TEntity;
+  toRow?: (input: TCreateInput | TUpdateInput) => Partial<TRow>;
+  toInsertRow?: (input: TCreateInput) => Partial<TRow>;
+  toUpdateRow?: (input: TUpdateInput) => Partial<Omit<TRow, TPrimaryKey>>;
+};
+
+export abstract class BaseDao<
+  TRow extends DbRow,
+  TEntity,
+  TCreateInput,
+  TUpdateInput,
+  TPrimaryKey extends DbColumn<TRow>,
+> {
+  protected constructor(private readonly config: BaseDaoConfig<TRow, TEntity, TCreateInput, TUpdateInput, TPrimaryKey>) {}
+
+  async read(
+    options: FindManyOptions<TRow> = {},
+    client?: DatabaseClient,
+  ): Promise<TEntity[]> {
+    const whereClause = buildWhereClause(options.where);
+    const limitOffsetClause = buildLimitOffsetClause({
+      limit: options.limit,
+      offset: options.offset,
+    }, whereClause.values.length + 1);
+    const queryText = [
+      `select * from ${quoteIdentifier(this.config.table)}`,
+      whereClause.text,
+      buildOrderByClause(options.orderBy ?? this.config.defaultOrderBy),
+      limitOffsetClause.text,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    const rows = await queryDb<TRow>(
+      queryText,
+      [...whereClause.values, ...limitOffsetClause.values],
+      client,
+    );
+
+    return rows.map((row) => this.fromRow(row));
+  }
+
+  async create(
+    input: TCreateInput,
+    client?: DatabaseClient,
+  ): Promise<TEntity> {
+    const mappedInput = this.mapInsertInput(input);
+    const withPrimaryKey = this.withPrimaryKey(mappedInput);
+    const insertClause = buildInsertClause<TRow>(withPrimaryKey);
+
+    const rows = await queryDb<TRow>(
+      [
+        `insert into ${quoteIdentifier(this.config.table)} (${insertClause.columnsText})`,
+        `values (${insertClause.text})`,
+        "returning *",
+      ].join(" "),
+      insertClause.values,
+      client,
+    );
+
+    return this.fromRow(rows[0]);
+  }
+
+  async update(
+    id: TRow[TPrimaryKey],
+    input: TUpdateInput,
+    client?: DatabaseClient,
+  ): Promise<TEntity | null> {
+    const updateRow = this.mapUpdateInput(input);
+    const setClause = buildSetClause<TRow>(updateRow as Partial<TRow>);
+
+    if (!setClause.text) {
+      const rows = await this.read({
+        where: {
+          field: this.config.primaryKey,
+          op: "=",
+          value: id as Exclude<DbScalar, null>,
+        },
+        limit: 1,
+      }, client);
+
+      return rows[0] ?? null;
+    }
+
+    const rows = await queryDb<TRow>(
+      [
+        `update ${quoteIdentifier(this.config.table)}`,
+        `set ${setClause.text}`,
+        `where ${quoteIdentifier(this.config.primaryKey)} = $${setClause.values.length + 1}`,
+        "returning *",
+      ].join(" "),
+      [...setClause.values, id],
+      client,
+    );
+
+    const row = rows[0];
+    return row ? this.fromRow(row) : null;
+  }
+
+  async delete(
+    options: DeleteOptions<TRow>,
+    client?: DatabaseClient,
+  ): Promise<TEntity[]> {
+    const whereClause = buildWhereClause(options.where);
+    const rows = await queryDb<TRow>(
+      [
+        `delete from ${quoteIdentifier(this.config.table)}`,
+        whereClause.text,
+        "returning *",
+      ].join(" "),
+      whereClause.values,
+      client,
+    );
+
+    return rows.map((row) => this.fromRow(row));
+  }
+
+  protected fromRow(row: TRow): TEntity {
+    const validatedRow = this.config.rowSchema.assert(row) as TRow;
+    return this.config.fromRow(validatedRow);
+  }
+
+  private withPrimaryKey(valuesByColumn: Partial<TRow>): Partial<TRow> {
+    const primaryKey = this.config.primaryKey;
+
+    if (valuesByColumn[primaryKey] !== undefined || !this.config.createPrimaryKey) {
+      return valuesByColumn;
+    }
+
+    return {
+      ...valuesByColumn,
+      [primaryKey]: this.config.createPrimaryKey(),
+    };
+  }
+
+  private mapInsertInput(input: TCreateInput): Partial<TRow> {
+    const mapped = this.config.toInsertRow?.(input) ?? this.config.toRow?.(input);
+
+    if (!mapped) {
+      throw new Error(`DAO for "${this.config.table}" is missing a toRow or toInsertRow mapper`);
+    }
+
+    return removeUndefinedProperties(mapped);
+  }
+
+  private mapUpdateInput(input: TUpdateInput): Partial<Omit<TRow, TPrimaryKey>> {
+    const mapped = this.config.toUpdateRow?.(input) ?? this.config.toRow?.(input);
+
+    if (!mapped) {
+      throw new Error(`DAO for "${this.config.table}" is missing a toRow or toUpdateRow mapper`);
+    }
+
+    return removeUndefinedProperties(mapped) as Partial<Omit<TRow, TPrimaryKey>>;
+  }
+}
+
+function removeUndefinedProperties<T extends object>(value: T): T {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, entryValue]) => entryValue !== undefined),
+  ) as T;
+}
