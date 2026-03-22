@@ -32,7 +32,7 @@ export type OrderBy<TRow extends DbRow> = {
   direction?: "asc" | "desc";
 };
 
-export type FindManyOptions<TRow extends DbRow> = {
+export type QueryOptions<TRow extends DbRow> = {
   where?: FilterNode<TRow>;
   orderBy?: readonly OrderBy<TRow>[];
   limit?: number;
@@ -76,14 +76,17 @@ export function buildOrderByClause<TRow extends DbRow>(
   }
 
   return `order by ${orderBy
-    .map(({ field, direction = "asc" }) => `${quoteIdentifier(field)} ${direction}`)
+    .map(
+      ({ field, direction = "asc" }) =>
+        `${quoteIdentifier(field)} ${direction}`,
+    )
     .join(", ")}`;
 }
 
-export function buildLimitOffsetClause({
-  limit,
-  offset,
-}: Pick<FindManyOptions<DbRow>, "limit" | "offset">, startIndex = 1): SqlFragment {
+export function buildLimitOffsetClause(
+  { limit, offset }: Pick<QueryOptions<DbRow>, "limit" | "offset">,
+  startIndex = 1,
+): SqlFragment {
   const values: unknown[] = [];
   const segments: string[] = [];
 
@@ -116,7 +119,9 @@ export function buildSetClause<TRow extends DbRow>(
     }
 
     values.push(value);
-    assignments.push(`${quoteIdentifier(column)} = $${startIndex + values.length - 1}`);
+    assignments.push(
+      `${quoteIdentifier(column)} = $${startIndex + values.length - 1}`,
+    );
   }
 
   return {
@@ -192,7 +197,9 @@ function buildFilterNode<TRow extends DbRow>(
     }
 
     const values = [...node.value];
-    const placeholders = values.map((_, index) => `$${startIndex + index}`).join(", ");
+    const placeholders = values
+      .map((_, index) => `$${startIndex + index}`)
+      .join(", ");
 
     return {
       text: `${column} ${node.op} (${placeholders})`,
