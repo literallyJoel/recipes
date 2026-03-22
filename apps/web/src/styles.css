@@ -1,26 +1,122 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
 :root {
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
-  line-height: 1.5;
+  --background: oklch(0.96 0.02 85);
+  --foreground: oklch(0.28 0.03 28);
+  --card: oklch(0.985 0.012 86);
+  --card-foreground: oklch(0.28 0.03 28);
+  --popover: oklch(0.985 0.012 86);
+  --popover-foreground: oklch(0.28 0.03 28);
+  --primary: oklch(0.62 0.2 28);
+  --primary-foreground: oklch(0.98 0.01 85);
+  --secondary: oklch(0.91 0.035 74);
+  --secondary-foreground: oklch(0.31 0.03 28);
+  --muted: oklch(0.9 0.02 80);
+  --muted-foreground: oklch(0.47 0.025 35);
+  --accent: oklch(0.81 0.13 96);
+  --accent-foreground: oklch(0.23 0.03 32);
+  --destructive: oklch(0.58 0.21 25);
+  --destructive-foreground: oklch(0.98 0.01 85);
+  --border: oklch(0.33 0.025 30);
+  --input: oklch(0.88 0.025 82);
+  --ring: oklch(0.62 0.2 28);
+  --radius: 1rem;
+  color-scheme: light;
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(145deg, #fefce8, #e0f2fe);
+.dark {
+  --background: oklch(0.23 0.025 24);
+  --foreground: oklch(0.93 0.015 85);
+  --card: oklch(0.28 0.025 24);
+  --card-foreground: oklch(0.93 0.015 85);
+  --popover: oklch(0.28 0.025 24);
+  --popover-foreground: oklch(0.93 0.015 85);
+  --primary: oklch(0.68 0.18 32);
+  --primary-foreground: oklch(0.18 0.015 24);
+  --secondary: oklch(0.39 0.05 58);
+  --secondary-foreground: oklch(0.94 0.015 85);
+  --muted: oklch(0.31 0.02 32);
+  --muted-foreground: oklch(0.76 0.02 82);
+  --accent: oklch(0.74 0.12 96);
+  --accent-foreground: oklch(0.22 0.02 34);
+  --destructive: oklch(0.66 0.18 28);
+  --destructive-foreground: oklch(0.15 0.01 24);
+  --border: oklch(0.9 0.015 85);
+  --input: oklch(0.36 0.03 35);
+  --ring: oklch(0.74 0.13 96);
+  color-scheme: dark;
 }
 
-main {
-  width: min(560px, 90vw);
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 2rem;
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: oklch(0.23 0.025 24);
+    --foreground: oklch(0.93 0.015 85);
+    --card: oklch(0.28 0.025 24);
+    --card-foreground: oklch(0.93 0.015 85);
+    --popover: oklch(0.28 0.025 24);
+    --popover-foreground: oklch(0.93 0.015 85);
+    --primary: oklch(0.68 0.18 32);
+    --primary-foreground: oklch(0.18 0.015 24);
+    --secondary: oklch(0.39 0.05 58);
+    --secondary-foreground: oklch(0.94 0.015 85);
+    --muted: oklch(0.31 0.02 32);
+    --muted-foreground: oklch(0.76 0.02 82);
+    --accent: oklch(0.74 0.12 96);
+    --accent-foreground: oklch(0.22 0.02 34);
+    --destructive: oklch(0.66 0.18 28);
+    --destructive-foreground: oklch(0.15 0.01 24);
+    --border: oklch(0.9 0.015 85);
+    --input: oklch(0.36 0.03 35);
+    --ring: oklch(0.74 0.13 96);
+    color-scheme: dark;
+  }
 }
 
-input {
-  margin-top: 0.5rem;
-  width: 100%;
-  padding: 0.5rem;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 0.5rem);
+  --radius-md: calc(var(--radius) - 0.25rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.25rem);
+  --font-display: "Cooper Std", "Bookman Old Style", "Georgia", serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family:
+      "Avenir Next", "Trebuchet MS", sans-serif;
+    background-image:
+      radial-gradient(circle at top left, color-mix(in oklab, var(--accent) 18%, transparent), transparent 28%),
+      linear-gradient(180deg, color-mix(in oklab, var(--background) 88%, white), var(--background));
+  }
+
+  #root {
+    min-height: 100vh;
+  }
 }
