@@ -1,10 +1,26 @@
 import { sql } from "bun";
 
+/**
+ * Generic row shape used by the lightweight SQL helpers.
+ */
 export type DbRow = Record<string, unknown>;
+
+/**
+ * Database client surface shared by pooled and transaction-scoped Bun SQL
+ * instances.
+ */
 export type DatabaseClient = Bun.SQL | Bun.TransactionSQL;
 
+/**
+ * Shared Bun SQL client for the backend database layer.
+ */
 export const db = sql;
 
+/**
+ * Execute a positional-parameter SQL query through Bun's interpolation path.
+ * Queries are authored with `$1`, `$2`, ... placeholders and converted into a
+ * tagged-template call so Bun handles value binding.
+ */
 export async function queryDb<TRow extends DbRow>(
   query: string,
   values: readonly unknown[] = [],
@@ -14,12 +30,19 @@ export async function queryDb<TRow extends DbRow>(
   return await client<TRow[]>(strings, ...interpolatedValues);
 }
 
+/**
+ * Run a function inside a Bun SQL transaction.
+ */
 export async function withTransaction<TResult>(
   run: (client: Bun.TransactionSQL) => Promise<TResult>,
 ): Promise<TResult> {
   return await db.begin(async (transaction) => await run(transaction));
 }
 
+/**
+ * Convert a `$1`-style SQL string into a `TemplateStringsArray` plus values so
+ * the query can be executed through Bun's safe interpolation API.
+ */
 function toTemplateLiteral(
   query: string,
   values: readonly unknown[],
@@ -44,6 +67,10 @@ function toTemplateLiteral(
   return [asTemplateStringsArray(strings), interpolatedValues];
 }
 
+/**
+ * Build a minimal `TemplateStringsArray` object for programmatic tagged-template
+ * execution.
+ */
 function asTemplateStringsArray(strings: string[]): TemplateStringsArray {
   return Object.assign([...strings], {
     raw: [...strings],

@@ -31,6 +31,11 @@ export type BaseDaoConfig<
   toUpdateRow?: (input: TUpdateInput) => Partial<Omit<TRow, TPrimaryKey>>;
 };
 
+/**
+ * Shared DAO foundation for table-backed persistence objects.
+ * Public CRUD methods delegate to protected `_` helpers so subclasses can
+ * override entrypoints like `read()` while still reusing the base mechanics.
+ */
 export abstract class BaseDao<
   TRow extends DbRow,
   TEntity,
@@ -74,6 +79,11 @@ export abstract class BaseDao<
     return await this._delete(options, client);
   }
 
+  /**
+   * Default table read implementation used by `read()`.
+   * Subclasses can override `read()` and still call `_readFromQuery()` when
+   * they need handwritten SQL but want to preserve DAO-level mapping.
+   */
   protected async _read(
     options: QueryOptions<TRow> = {},
     client?: DatabaseClient,
@@ -104,6 +114,11 @@ export abstract class BaseDao<
     return rows.map((row) => this.fromRow(row));
   }
 
+  /**
+   * Default insert implementation used by `create()`.
+   * Mapper output is normalized, generated primary keys are injected when
+   * configured, and the inserted row is returned via `returning *`.
+   */
   protected async _create(
     input: TCreateInput,
     client?: DatabaseClient,
@@ -125,6 +140,11 @@ export abstract class BaseDao<
     return this.fromRow(rows[0]);
   }
 
+  /**
+   * Default update implementation used by `update()`.
+   * Undefined values are omitted from the SQL payload; if no columns remain,
+   * the current row is read back instead of issuing an empty update.
+   */
   protected async _update(
     id: TRow[TPrimaryKey],
     input: TUpdateInput,
@@ -164,6 +184,11 @@ export abstract class BaseDao<
     return row ? this.fromRow(row) : null;
   }
 
+  /**
+   * Default delete implementation used by `delete()`.
+   * Deleted rows are returned through the same entity mapper so callers can
+   * inspect the removed records without issuing a follow-up read.
+   */
   protected async _delete(
     options: DeleteOptions<TRow>,
     client?: DatabaseClient,
@@ -182,6 +207,11 @@ export abstract class BaseDao<
     return rows.map((row) => this.fromRow(row));
   }
 
+  /**
+   * Execute a custom query while preserving row validation and entity mapping.
+   * This is the main escape hatch for subclasses that need raw SQL control
+   * without bypassing the DAO boundary.
+   */
   protected async _readFromQuery<TJoinedRow extends DbRow>(
     query: string,
     values: readonly unknown[] = [],
@@ -249,6 +279,11 @@ export abstract class BaseDao<
   }
 }
 
+/**
+ * Drop undefined keys before building SQL payloads.
+ * `undefined` means "omit this column"; `null` is preserved so callers can
+ * explicitly write SQL NULL where the schema allows it.
+ */
 function removeUndefinedProperties<T extends object>(value: T): T {
   return Object.fromEntries(
     Object.entries(value).filter(([, entryValue]) => entryValue !== undefined),

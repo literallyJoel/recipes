@@ -3,12 +3,22 @@ import { storeSchema } from "./stores";
 import { serverGeneratedFields, stubSchema } from "./common";
 
 // Ingredient Tags
+
+/**
+ * Client-supplied fields required to create an ingredient tag.
+ */
 export const createIngredientTagSchema = type({
   name: "string",
 });
 
+/**
+ * Partial ingredient tag updates.
+ */
 export const updateIngredientTagSchema = createIngredientTagSchema.partial();
 
+/**
+ * Full ingredient tag entity shape including server-generated fields.
+ */
 export const ingredientTagSchema = createIngredientTagSchema.and(
   serverGeneratedFields,
 );
@@ -19,6 +29,11 @@ export type IngredientTag = typeof ingredientTagSchema.infer;
 
 // Ingredients
 
+/**
+ * Per-nutrient values stored for an ingredient.
+ * Individual keys are optional and nullable so update payloads can clear a
+ * single nutrient without replacing the entire object.
+ */
 export const ingredientNutritionSchema = type({
   energy: "number | null",
   fat: "number | null",
@@ -30,6 +45,9 @@ export const ingredientNutritionSchema = type({
   salt: "number | null",
 }).partial();
 
+/**
+ * Client-supplied fields required to create an ingredient.
+ */
 export const createIngredientSchema = type({
   name: "string",
   brand: "string",
@@ -42,6 +60,9 @@ export const createIngredientSchema = type({
   "nutrition?": ingredientNutritionSchema,
 });
 
+/**
+ * Partial ingredient updates, including explicit nulls for clearable fields.
+ */
 export const updateIngredientSchema = type({
   "name?": "string",
   "brand?": "string",
@@ -54,6 +75,9 @@ export const updateIngredientSchema = type({
   "nutrition?": ingredientNutritionSchema.or("null"),
 });
 
+/**
+ * Full ingredient entity shape exposed to the app layer.
+ */
 export const ingredientSchema = createIngredientSchema.and(
   serverGeneratedFields,
 );

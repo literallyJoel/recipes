@@ -15,6 +15,11 @@ export type IngredientRecord = Omit<
   nutrition?: IngredientNutrition;
 };
 
+/**
+ * Ingredients table DAO.
+ * Handles flattening nutrition fields into row columns and rebuilding the
+ * optional nutrition object when rows are read back.
+ */
 export class IngredientDao extends BaseDao<
   IngredientDbRow,
   IngredientRecord,
@@ -71,6 +76,10 @@ export class IngredientDao extends BaseDao<
   }
 }
 
+/**
+ * Flatten ingredient record fields into the row-oriented shape expected by the
+ * ingredients table.
+ */
 function mapIngredientRow(
   input: Omit<IngredientRecord, "id" | "createdAt" | "updatedAt"> | Partial<Omit<IngredientRecord, "id" | "createdAt" | "updatedAt">>,
 ) {
@@ -97,6 +106,10 @@ function mapIngredientRow(
   };
 }
 
+/**
+ * Rebuild the compact nutrition object from nullable nutrient columns.
+ * Returns `undefined` when no nutrient values are present.
+ */
 function buildNutrition(row: IngredientDbRow): IngredientRecord["nutrition"] {
   const nutrition = {
     energy: row.energy ?? undefined,

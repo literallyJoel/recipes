@@ -27,6 +27,11 @@ const recipeWithUserDbRowSchema = recipeDBRowSchema.and({
 
 type RecipeWithUserDbRow = typeof recipeWithUserDbRowSchema.infer;
 
+/**
+ * Recipes table DAO.
+ * Overrides `read()` so recipe reads always join the auth user table and
+ * hydrate the owner stub inline.
+ */
 export class RecipeDao extends BaseDao<
   RecipeDbRow,
   RecipeRecord,
@@ -134,6 +139,10 @@ export class RecipeDao extends BaseDao<
 
 export const recipeDao = new RecipeDao();
 
+/**
+ * Qualify generated `where` and `order by` fragments against the recipe table
+ * alias used by joined recipe reads.
+ */
 function prefixTableAlias(clause: string, tableAlias: string): string {
   return clause.replace(/"([^"]+)"/g, `${tableAlias}."$1"`);
 }

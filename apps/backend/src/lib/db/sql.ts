@@ -1,8 +1,18 @@
 import type { DbRow } from "./client";
 
+/**
+ * String keys from a database row, used for typed column references.
+ */
 export type DbColumn<TRow extends DbRow> = Extract<keyof TRow, string>;
+
+/**
+ * Scalar values supported by the SQL filter and write helpers.
+ */
 export type DbScalar = string | number | boolean | Date | null;
 
+/**
+ * Leaf predicate supported by the lightweight SQL builder.
+ */
 export type FilterCondition<TRow extends DbRow> =
   | {
       field: DbColumn<TRow>;
@@ -48,10 +58,18 @@ export type SqlFragment = {
   values: unknown[];
 };
 
+/**
+ * Quote an identifier for safe inclusion in generated SQL.
+ * This is only for trusted identifiers such as table and column names from the
+ * codebase, not user input.
+ */
 export function quoteIdentifier(identifier: string): string {
   return `"${identifier.replaceAll('"', '""')}"`;
 }
 
+/**
+ * Build a `where` clause fragment and its positional values.
+ */
 export function buildWhereClause<TRow extends DbRow>(
   where?: FilterNode<TRow>,
   startIndex = 1,
@@ -68,6 +86,9 @@ export function buildWhereClause<TRow extends DbRow>(
   };
 }
 
+/**
+ * Build an `order by` clause from typed column references.
+ */
 export function buildOrderByClause<TRow extends DbRow>(
   orderBy?: readonly OrderBy<TRow>[],
 ): string {
@@ -83,6 +104,10 @@ export function buildOrderByClause<TRow extends DbRow>(
     .join(", ")}`;
 }
 
+/**
+ * Build `limit` / `offset` fragments while preserving positional parameter
+ * numbering.
+ */
 export function buildLimitOffsetClause(
   { limit, offset }: Pick<QueryOptions<DbRow>, "limit" | "offset">,
   startIndex = 1,
@@ -106,6 +131,11 @@ export function buildLimitOffsetClause(
   };
 }
 
+/**
+ * Build a `set` clause from a partial row payload.
+ * Undefined values are skipped so callers can model "omit" without special
+ * casing at the callsite.
+ */
 export function buildSetClause<TRow extends DbRow>(
   valuesByColumn: Partial<TRow>,
   startIndex = 1,
@@ -130,6 +160,10 @@ export function buildSetClause<TRow extends DbRow>(
   };
 }
 
+/**
+ * Build the columns and placeholders used for an `insert` statement.
+ * Undefined values are omitted to align with DAO mapper semantics.
+ */
 export function buildInsertClause<TRow extends DbRow>(
   valuesByColumn: Partial<TRow>,
   startIndex = 1,
@@ -155,6 +189,9 @@ export function buildInsertClause<TRow extends DbRow>(
   };
 }
 
+/**
+ * Recursively build the SQL fragment for a filter tree.
+ */
 function buildFilterNode<TRow extends DbRow>(
   node: FilterNode<TRow>,
   startIndex: number,

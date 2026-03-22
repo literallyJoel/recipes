@@ -3,6 +3,10 @@ import { serverGeneratedFields, stubSchema } from "./common";
 import { ingredientSchema } from "./ingredients";
 import { userSchema } from "./users";
 
+/**
+ * Ingredient usage within a recipe, including quantity metadata and a hydrated
+ * ingredient stub.
+ */
 export const recipeIngredientSchema = type({
   quantity: "number",
   quantityUnit: "string",
@@ -13,6 +17,9 @@ export const recipeIngredientSchema = type({
   id: "string.uuid",
 });
 
+/**
+ * Client-supplied fields required to create a recipe.
+ */
 export const createRecipeSchema = type({
   title: "string",
   "description?": "string",
@@ -23,6 +30,10 @@ export const createRecipeSchema = type({
   isPublic: "boolean",
 });
 
+/**
+ * Partial recipe updates, including explicit nulls for clearable optional
+ * fields.
+ */
 export const updateRecipeSchema = type({
   "title?": "string",
   "description?": "string | null",
@@ -33,6 +44,9 @@ export const updateRecipeSchema = type({
   "isPublic?": "boolean",
 });
 
+/**
+ * Full recipe entity shape exposed to the app layer.
+ */
 export const recipeSchema = createRecipeSchema
   .and(serverGeneratedFields)
   .and({ user: stubSchema(userSchema) })

@@ -18,6 +18,11 @@ const sharedRecipeWithUsersDbRowSchema = recipeDBRowSchema.and({
 
 type SharedRecipeWithUsersDbRow = typeof sharedRecipeWithUsersDbRowSchema.infer;
 
+/**
+ * Recipe read model.
+ * Owns composed reads that span multiple tables, such as ingredient hydration
+ * and "recipes shared with this user" queries.
+ */
 export class RecipeModel extends BaseModel {
   async getAll(userId: string): Promise<Recipe[]> {
     return await recipeDao.read(
@@ -123,6 +128,10 @@ export class RecipeModel extends BaseModel {
     return await this.withIngredients(recipe);
   }
 
+  /**
+   * Reuse the standard ingredient hydration flow for both owned and shared
+   * recipe reads.
+   */
   private async withIngredients<TRecipe extends Recipe>(
     recipe: TRecipe,
   ): Promise<TRecipe> {
@@ -159,6 +168,12 @@ export class RecipeModel extends BaseModel {
     };
   }
 
+  /**
+   * Read recipes shared with a user directly from the model layer.
+   * This stays out of the DAO layer because the result is a composed read model
+   * spanning `shared_recipes`, `recipes`, and `user`, rather than a single
+   * table-backed persistence object.
+   */
   private async readSharedRecipes(
     sharedWithId: string,
     options: {
@@ -224,6 +239,9 @@ export class RecipeModel extends BaseModel {
   }
 }
 
+/**
+ * Merge recipe ingredient link rows with their referenced ingredient records.
+ */
 function hydrateRecipeIngredients(
   recipeIngredients: Awaited<ReturnType<typeof recipeIngredientDao.read>>,
   ingredients: IngredientRecord[],
