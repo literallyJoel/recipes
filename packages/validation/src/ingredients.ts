@@ -42,7 +42,17 @@ export const createIngredientSchema = type({
   "nutrition?": ingredientNutritionSchema,
 });
 
-export const updateIngredientSchema = createIngredientSchema.partial();
+export const updateIngredientSchema = type({
+  "name?": "string",
+  "brand?": "string",
+  "store?": stubSchema(storeSchema).or("null"),
+  "ingredientTag?": stubSchema(ingredientTagSchema).or("null"),
+  "priceAmount?": "number.integer | null",
+  "priceCurrency?": "string == 3 | null",
+  "packageSize?": "number | null",
+  "url?": "string.url | null",
+  "nutrition?": ingredientNutritionSchema.or("null"),
+});
 
 export const ingredientSchema = createIngredientSchema.and(
   serverGeneratedFields,
