@@ -162,6 +162,14 @@ function buildFilterNode<TRow extends DbRow>(
   if ("and" in node || "or" in node) {
     const operator = "and" in node ? "and" : "or";
     const children = "and" in node ? node.and : node.or;
+
+    if (children.length === 0) {
+      return {
+        text: "",
+        values: [],
+      };
+    }
+
     const parts: string[] = [];
     const values: unknown[] = [];
     let nextIndex = startIndex;
