@@ -8,7 +8,10 @@ export const createStoreSchema = type({
 
 export const storeSchema = createStoreSchema.and(serverGeneratedFields);
 
-export const updateStoreSchema = createStoreSchema.partial();
+export const updateStoreSchema = type({
+  "name?": "string",
+  "logoUrl?": "string.url | null",
+});
 
 export type CreateStoreInput = typeof createStoreSchema.infer;
 export type UpdateStoreInput = typeof updateStoreSchema.infer;

@@ -33,7 +33,19 @@ export const createFoodLogEntrySchema = foodLogEntryBaseSchema.and(
   foodLogSourceSchema,
 );
 
-export const updateFoodLogEntrySchema = createFoodLogEntrySchema.partial();
+export const updateFoodLogEntrySchema = type({
+  "user?": stubSchema(userSchema),
+  "date?": "Date",
+  "mealType?": mealTypeSchema,
+  "loggedAt?": "Date",
+  "servings?": "number > 0 | null",
+  "quantity?": "number > 0 | null",
+  "quantityUnit?": "string | null",
+  "label?": "string | null",
+  "nutritionSnapshot?": "string.json | null",
+  "recipe?": stubSchema(recipeSchema).or("null"),
+  "ingredient?": stubSchema(ingredientSchema).or("null"),
+});
 export const foodLogEntrySchema = createFoodLogEntrySchema.and(
   serverGeneratedFields,
 );
