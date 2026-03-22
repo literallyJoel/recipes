@@ -10,7 +10,7 @@ interface SerializedError {
   name: string;
   message: string;
   code?: string;
-  data?: ErrorContext;
+  data?: unknown;
   stack?: string;
   cause?: SerializedError;
 }
@@ -68,18 +68,36 @@ export function serializeError(
   options: { includeStack?: boolean } = {},
 ): SerializedError {
   const includeStack = options.includeStack ?? true;
+  return serializeErrorInternal(error, includeStack, new WeakSet<object>());
+}
+
+function serializeErrorInternal(
+  error: unknown,
+  includeStack: boolean,
+  seen: WeakSet<object>,
+): SerializedError {
+  if (error && typeof error === "object") {
+    if (seen.has(error)) {
+      return {
+        name: "CircularError",
+        message: "[Circular]",
+      };
+    }
+
+    seen.add(error);
+  }
 
   if (isAppError(error)) {
     return {
       name: error.name,
       message: error.message,
       code: error.code,
-      data: error.data,
+      data: safeSerializeData(error.data, includeStack, seen),
       stack: includeStack ? error.stack : undefined,
       cause:
         error.cause === undefined
           ? undefined
-          : serializeError(error.cause, options),
+          : serializeErrorInternal(error.cause, includeStack, seen),
     };
   }
 
@@ -91,15 +109,74 @@ export function serializeError(
       cause:
         error.cause === undefined
           ? undefined
-          : serializeError(error.cause, options),
+          : serializeErrorInternal(error.cause, includeStack, seen),
     };
   }
 
   return {
     name: "NonErrorThrown",
     message: "A non-Error value was thrown",
-    data: {
+    data: safeSerializeData({
       value: error,
-    },
+    }, includeStack, seen),
   };
+}
+
+function safeSerializeData(
+  value: unknown,
+  includeStack: boolean,
+  seen: WeakSet<object>,
+): unknown {
+  return sanitizeData(value, includeStack, seen);
+}
+
+function sanitizeData(
+  value: unknown,
+  includeStack: boolean,
+  seen: WeakSet<object>,
+): unknown {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  if (typeof value === "bigint") {
+    return value.toString();
+  }
+
+  if (typeof value === "symbol") {
+    return String(value);
+  }
+
+  if (typeof value === "function") {
+    return `[Function ${value.name || "anonymous"}]`;
+  }
+
+  if (typeof value !== "object") {
+    return value;
+  }
+
+  if (seen.has(value)) {
+    return "[Circular]";
+  }
+
+  seen.add(value);
+
+  if (value instanceof Error) {
+    return serializeErrorInternal(value, includeStack, seen);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((entry) => sanitizeData(entry, includeStack, seen));
+  }
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([key, entryValue]) => {
+      const sanitizedValue = sanitizeData(entryValue, includeStack, seen);
+      return sanitizedValue === undefined ? [] : [[key, sanitizedValue]];
+    }),
+  );
 }

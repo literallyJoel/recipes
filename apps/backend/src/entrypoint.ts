@@ -7,10 +7,12 @@ import { Log } from "./lib/logging/Log";
 
 process.on("uncaughtException", (error) => {
   Log.error("Uncaught exception", buildErrorLogContext(error));
+  process.exit(1);
 });
 
 process.on("unhandledRejection", (reason) => {
   Log.error("Unhandled promise rejection", buildErrorLogContext(reason));
+  process.exit(1);
 });
 
 const routes = await getRoutes({

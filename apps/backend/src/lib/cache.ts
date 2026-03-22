@@ -16,7 +16,8 @@ class Cache {
           key,
           error,
         });
-        return raw as T;
+        await this.delete(key);
+        return null;
       }
     } catch (error) {
       Log.warn("Cache read failed", {
@@ -27,6 +28,21 @@ class Cache {
         }),
       });
       return null;
+    }
+  }
+
+  async delete(key: string): Promise<void> {
+    if (!env.ENABLE_CACHE) return;
+    try {
+      await client.del(key);
+    } catch (error) {
+      Log.warn("Cache delete failed", {
+        key,
+        error: new ExternalServiceError("Failed to delete from Redis", {
+          data: { key },
+          cause: error,
+        }),
+      });
     }
   }
 

@@ -145,11 +145,14 @@ function formatMeta(meta: Meta): string {
 
 function normalizeMeta(meta: Meta): Meta {
   return Object.fromEntries(
-    Object.entries(meta).map(([key, value]) => [key, normalizeMetaValue(value)]),
+    Object.entries(meta).map(([key, value]) => [
+      key,
+      normalizeMetaValue(value, new WeakSet<object>()),
+    ]),
   );
 }
 
-function normalizeMetaValue(value: unknown): unknown {
+function normalizeMetaValue(value: unknown, visited: WeakSet<object>): unknown {
   if (value instanceof Error) {
     return serializeError(value, {
       includeStack: process.env.NODE_ENV !== "production",
@@ -157,14 +160,24 @@ function normalizeMetaValue(value: unknown): unknown {
   }
 
   if (Array.isArray(value)) {
-    return value.map((entry) => normalizeMetaValue(entry));
+    if (visited.has(value)) {
+      return "[Circular]";
+    }
+
+    visited.add(value);
+    return value.map((entry) => normalizeMetaValue(entry, visited));
   }
 
   if (value && typeof value === "object") {
+    if (visited.has(value)) {
+      return "[Circular]";
+    }
+
+    visited.add(value);
     return Object.fromEntries(
       Object.entries(value).map(([key, entryValue]) => [
         key,
-        normalizeMetaValue(entryValue),
+        normalizeMetaValue(entryValue, visited),
       ]),
     );
   }

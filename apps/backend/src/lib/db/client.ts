@@ -1,5 +1,5 @@
 import { sql } from "bun";
-import { DatabaseError } from "../errors";
+import { AppError, DatabaseError } from "../errors";
 
 /**
  * Generic row shape used by the lightweight SQL helpers.
@@ -51,6 +51,10 @@ export async function withTransaction<TResult>(
   try {
     return await db.begin(async (transaction) => await run(transaction));
   } catch (error) {
+    if (error instanceof DatabaseError || error instanceof AppError) {
+      throw error;
+    }
+
     throw new DatabaseError("Database transaction failed", { cause: error });
   }
 }
