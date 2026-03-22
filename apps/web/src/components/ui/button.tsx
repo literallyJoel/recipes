@@ -20,9 +20,9 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         retro:
-          "rounded-full border-[3px] border-foreground bg-background text-foreground shadow-[4px_4px_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none",
+          "rounded-full border-retro border-foreground bg-background text-foreground shadow-retro-sm hover:translate-x-nudge hover:translate-y-nudge hover:shadow-none",
         poster:
-          "rounded-[1.1rem] border-[3px] border-foreground bg-accent text-accent-foreground shadow-[4px_4px_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none",
+          "rounded-poster border-retro border-foreground bg-accent text-accent-foreground shadow-retro-sm hover:translate-x-nudge hover:translate-y-nudge hover:shadow-none",
       },
       size: {
         default: "h-9 px-4 py-2",

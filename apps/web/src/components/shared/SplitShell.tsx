@@ -15,7 +15,7 @@ export const SplitShell = ({ aside, children }: SplitShellProps) => {
           variant="frame"
           className="grid w-full overflow-hidden lg:min-h-144 lg:grid-cols-[1.05fr_0.95fr]"
         >
-          <section className="bg-primary text-primary-foreground flex min-h-64 items-start border-b-[3px] border-foreground p-8 sm:p-10 lg:min-h-full lg:border-r-[3px] lg:border-b-0 lg:p-14">
+          <section className="bg-primary text-primary-foreground flex min-h-64 items-start border-b-retro border-foreground p-8 sm:p-10 lg:min-h-full lg:border-r-retro lg:border-b-0 lg:p-14">
             {aside}
           </section>
 

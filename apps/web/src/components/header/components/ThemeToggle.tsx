@@ -1,7 +1,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { cn } from "../../lib/utils";
+import { cn } from "../../../lib/utils";
 
 type Theme = "light" | "system" | "dark";
 
@@ -44,15 +44,19 @@ export const ThemeToggle = () => {
   }, [ready, theme]);
 
   return (
-    <div className="inline-flex items-center rounded-full border-[3px] border-foreground bg-background p-1 shadow-[4px_4px_0_var(--foreground)]">
+    <div
+      className="inline-flex items-center rounded-full border-retro border-foreground bg-background p-1 shadow-retro-sm"
+      role="group"
+      aria-label="Theme selection"
+    >
       <div className="relative grid grid-cols-3">
         <span
           aria-hidden="true"
           className={cn(
-            "bg-accent absolute top-0 bottom-0 w-[calc(33.333%-0.167rem)] rounded-full border-2 border-foreground transition-transform duration-300 ease-out",
+            "bg-accent absolute inset-y-0 w-[calc(33.333%-0.167rem)] rounded-full border-2 border-foreground transition-transform duration-300 ease-out",
             theme === "light" && "translate-x-0",
-            theme === "system" && "translate-x-[calc(100%+0.125rem)]",
-            theme === "dark" && "translate-x-[calc(200%+0.25rem)]",
+            theme === "system" && "translate-toggle-system",
+            theme === "dark" && "translate-toggle-dark",
           )}
         />
 
@@ -90,7 +94,7 @@ export const ThemeToggle = () => {
         >
           <Monitor
             className={cn(
-              "size-4 -translate-x-[2px] transition-transform duration-300",
+              "size-4 -translate-x-nudge transition-transform duration-300",
               theme === "system" ? "scale-100" : "scale-90",
             )}
           />
@@ -110,7 +114,7 @@ export const ThemeToggle = () => {
         >
           <Moon
             className={cn(
-              "size-4 -translate-x-[2px] transition-transform duration-300",
+              "size-4 -translate-x-nudge transition-transform duration-300",
               theme === "dark" ? "rotate-0 scale-100" : "rotate-45 scale-90",
             )}
           />

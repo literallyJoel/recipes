@@ -8,9 +8,9 @@ const cardVariants = cva("bg-card text-card-foreground", {
     variant: {
       default: "rounded-xl border shadow-sm",
       retro:
-        "rounded-[1.75rem] border-[3px] border-foreground bg-secondary shadow-[8px_8px_0_var(--foreground)]",
+        "rounded-retro border-retro border-foreground bg-secondary shadow-retro-md",
       frame:
-        "rounded-[2rem] border-[3px] border-foreground bg-card shadow-[10px_10px_0_var(--foreground)]"
+        "rounded-frame border-retro border-foreground bg-card shadow-retro-lg"
     }
   },
   defaultVariants: {

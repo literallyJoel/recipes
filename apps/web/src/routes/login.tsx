@@ -27,7 +27,7 @@ function LoginPage() {
     <SplitShell
       aside={
         <div className="space-y-3">
-          <h1 className="font-display max-w-3xl text-5xl leading-none tracking-[-0.04em] text-balance sm:text-6xl lg:text-7xl">
+          <h1 className="font-display max-w-3xl text-5xl leading-none tracking-display text-balance sm:text-6xl lg:text-7xl">
             Recipes
           </h1>
         </div>
@@ -35,10 +35,10 @@ function LoginPage() {
     >
       <Card variant="retro" className="bg-secondary px-5 py-6 sm:px-6 sm:py-7">
         <CardHeader className="space-y-3">
-          <p className="text-muted-foreground text-sm font-semibold uppercase tracking-[0.28em]">
+          <p className="text-muted-foreground text-sm font-semibold uppercase tracking-kicker">
             Sign in
           </p>
-          <CardTitle className="font-display text-4xl leading-none tracking-[-0.04em] sm:text-5xl">
+          <CardTitle className="font-display text-4xl leading-none tracking-display sm:text-5xl">
             Sign In
           </CardTitle>
         </CardHeader>

@@ -1,0 +1,78 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { authClient } from "@/lib/auth-client";
+import { ChevronDown } from "lucide-react";
+
+export const UserPanel = () => {
+  const { data: session, isPending } = authClient.useSession();
+  const name = session?.user.name?.trim() || "Your Account";
+  const initials =
+    session?.user.name
+      ?.split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "YR";
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label={session ? `Open account menu for ${name}` : "Open account menu"}
+          aria-busy={isPending}
+          className="relative inline-flex items-center gap-3 rounded-full border-retro border-foreground bg-background px-2 py-1.5 pr-10 shadow-retro-sm"
+        >
+          {session?.user.image ? (
+            <img
+              className="size-10 rounded-full border-2 border-foreground bg-accent object-cover"
+              src={session.user.image}
+              width={40}
+              height={40}
+              alt={session.user.name ? `${session.user.name} profile picture` : "Your profile picture"}
+            />
+          ) : (
+            <div className="bg-accent text-accent-foreground flex size-10 items-center justify-center rounded-full border-2 border-foreground">
+              <span className="font-display text-sm leading-none">
+                {initials}
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center justify-center pr-2">
+            <p className="text-foreground max-w-40 truncate text-sm font-semibold leading-none">
+              {isPending ? "Loading..." : name}
+            </p>
+          </div>
+          <div className="absolute right-3" aria-hidden="true">
+            <ChevronDown className="size-4" />
+          </div>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Recipes</DropdownMenuLabel>
+          <DropdownMenuItem>My Recipes</DropdownMenuItem>
+          <DropdownMenuItem>Shared With Me</DropdownMenuItem>
+          <DropdownMenuItem>Create Recipe</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>General</DropdownMenuLabel>
+          <DropdownMenuItem>My Account</DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem className="focus:bg-destructive">
+            Sign Out
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+export default UserPanel;

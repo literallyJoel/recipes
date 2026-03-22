@@ -100,6 +100,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 0.25rem);
   --font-display: "Cooper Std", "Bookman Old Style", "Georgia", serif;
+  --spacing-nudge: 2px;
 }
 
 @layer base {
@@ -119,4 +120,73 @@
   #root {
     min-height: 100vh;
   }
+}
+
+@utility border-retro {
+  border-width: 3px;
+}
+
+@utility rounded-menu-item {
+  border-radius: 0.9rem;
+}
+
+@utility rounded-menu-panel {
+  border-radius: 1.5rem;
+}
+
+@utility rounded-poster {
+  border-radius: 1.1rem;
+}
+
+@utility rounded-retro {
+  border-radius: 1.75rem;
+}
+
+@utility rounded-frame {
+  border-radius: 2rem;
+}
+
+@utility shadow-retro-xs {
+  box-shadow: 2px 2px 0 var(--foreground);
+}
+
+@utility shadow-retro-sm {
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+
+@utility shadow-retro-md {
+  box-shadow: 8px 8px 0 var(--foreground);
+}
+
+@utility shadow-retro-lg {
+  box-shadow: 10px 10px 0 var(--foreground);
+}
+
+@utility tracking-display {
+  letter-spacing: -0.04em;
+}
+
+@utility tracking-kicker {
+  letter-spacing: 0.28em;
+}
+
+@utility tracking-meta {
+  letter-spacing: 0.24em;
+}
+
+@utility text-2xs {
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+@utility h-divider {
+  height: 2px;
+}
+
+@utility translate-toggle-system {
+  transform: translateX(calc(100% + 0.125rem));
+}
+
+@utility translate-toggle-dark {
+  transform: translateX(calc(200% + 0.25rem));
 }
