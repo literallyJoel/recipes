@@ -1,6 +1,6 @@
 import type { Type } from "arktype";
 import { type DatabaseClient, type DbRow, queryDb } from "../client";
-import { InternalServerError } from "../../errors";
+import { InternalError } from "../../errors";
 import {
   buildInsertClause,
   buildLimitOffsetClause,
@@ -254,7 +254,7 @@ export abstract class BaseDao<
       this.config.toInsertRow?.(input) ?? this.config.toRow?.(input);
 
     if (!mapped) {
-      throw new InternalServerError(
+      throw new InternalError(
         `DAO for "${this.config.table}" is missing a toRow or toInsertRow mapper`,
         {
           code: "DAO_INSERT_MAPPER_MISSING",
@@ -275,7 +275,7 @@ export abstract class BaseDao<
       this.config.toUpdateRow?.(input) ?? this.config.toRow?.(input);
 
     if (!mapped) {
-      throw new InternalServerError(
+      throw new InternalError(
         `DAO for "${this.config.table}" is missing a toRow or toUpdateRow mapper`,
         {
           code: "DAO_UPDATE_MAPPER_MISSING",

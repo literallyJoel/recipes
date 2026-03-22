@@ -33,11 +33,11 @@ export async function queryDb<TRow extends DbRow>(
     return await client<TRow[]>(strings, ...interpolatedValues);
   } catch (error) {
     throw new DatabaseError("Database query failed", {
-      cause: error,
       data: {
         query,
         parameterCount: values.length,
       },
+      cause: error,
     });
   }
 }
@@ -51,9 +51,7 @@ export async function withTransaction<TResult>(
   try {
     return await db.begin(async (transaction) => await run(transaction));
   } catch (error) {
-    throw new DatabaseError("Database transaction failed", {
-      cause: error,
-    });
+    throw new DatabaseError("Database transaction failed", { cause: error });
   }
 }
 

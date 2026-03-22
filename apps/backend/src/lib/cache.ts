@@ -22,8 +22,8 @@ class Cache {
       Log.warn("Cache read failed", {
         key,
         error: new ExternalServiceError("Failed to read from Redis", {
-          cause: error,
           data: { key },
+          cause: error,
         }),
       });
       return null;
@@ -40,8 +40,8 @@ class Cache {
         key,
         ttl,
         error: new ExternalServiceError("Failed to write to Redis", {
-          cause: error,
           data: { key, ttl },
+          cause: error,
         }),
       });
     }
