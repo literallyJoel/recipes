@@ -39,14 +39,15 @@ function HomePage() {
   return (
     <SplitView
       asideClassName="col-span-3"
+      className="col-span-9"
       aside={
-        <div className="w-full max-w-full">
+        <div className="w-full max-w-full h-full">
           <CycleSelect
             aria-label="Home section"
             options={[...HOME_SECTIONS]}
             value={section}
             onChange={setSection}
-            className="w-full max-w-full px-1"
+            className="w-full max-w-full px-1 min-h-full"
           />
         </div>
       }

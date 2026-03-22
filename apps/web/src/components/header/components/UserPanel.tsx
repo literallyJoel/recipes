@@ -1,3 +1,4 @@
+import UserImage from "@/components/shared/UserImage";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,13 +14,6 @@ export const UserPanel = () => {
   const signOut = authClient.signOut;
   const { data: session, isPending } = authClient.useSession();
   const name = session?.user.name?.trim() || "Your Account";
-  const initials =
-    session?.user.name
-      ?.split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase())
-      .join("") || "YR";
 
   return (
     <DropdownMenu>
@@ -32,26 +26,7 @@ export const UserPanel = () => {
           aria-busy={isPending}
           className="relative inline-flex items-center gap-3 cursor-pointer rounded-full border-retro border-foreground bg-background px-2 py-1.5 pr-10 shadow-retro-sm"
         >
-          {session?.user.image ? (
-            <img
-              className="size-10 rounded-full border-2 border-foreground bg-accent object-cover"
-              src={session.user.image}
-              width={40}
-              height={40}
-              alt={
-                session.user.name
-                  ? `${session.user.name} profile picture`
-                  : "Your profile picture"
-              }
-            />
-          ) : (
-            <div className="bg-accent text-accent-foreground flex size-10 items-center justify-center rounded-full border-2 border-foreground">
-              <span className="font-display text-sm leading-none">
-                {initials}
-              </span>
-            </div>
-          )}
-
+          <UserImage user={session?.user} />
           <div className="flex items-center justify-center pr-2">
             <p className="text-foreground max-w-40 truncate text-sm font-semibold leading-none">
               {isPending ? "Loading..." : name}

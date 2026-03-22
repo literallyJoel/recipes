@@ -58,6 +58,7 @@ function findScrollTargetEl(
       `[data-cycle-value="${CSS.escape(String(value))}"]`,
     ),
   );
+
   if (nodes.length === 0) {
     return null;
   }
@@ -67,6 +68,7 @@ function findScrollTargetEl(
     const cy = containerRect.top + containerRect.height / 2;
     let best = nodes[0]!;
     let bestD = Infinity;
+
     for (const el of nodes) {
       const r = el.getBoundingClientRect();
       const d = Math.abs(r.top + r.height / 2 - cy);
@@ -75,6 +77,7 @@ function findScrollTargetEl(
         best = el;
       }
     }
+
     return best;
   };
 
@@ -86,12 +89,14 @@ function findScrollTargetEl(
   }
 
   const prevTop = getContentTop(previousEl, container);
+
   if (direction === 1) {
     const below = nodes.filter(
       (el) => getContentTop(el, container) > prevTop + 1,
     );
     return below[0] ?? nodes[0]!;
   }
+
   if (direction === -1) {
     const above = [...nodes].filter(
       (el) => getContentTop(el, container) < prevTop - 1,
@@ -130,21 +135,27 @@ export function CycleSelect<T extends string>({
   const initializedScrollRef = React.useRef(false);
   const reduceMotion = usePrefersReducedMotion();
 
+  const [viewportHeight, setViewportHeight] = React.useState<number>(0);
+
   const measureBlockHeight = React.useCallback(() => {
     const h = blockRef.current?.offsetHeight ?? 0;
     blockHeightRef.current = h;
+    setViewportHeight(h);
     return h;
   }, []);
 
   const applyInfiniteScrollJump = React.useCallback(() => {
     const el = listRef.current;
     const bh = blockHeightRef.current;
+
     if (!el || !bh || n <= 1) {
       return;
     }
+
     if (suppressScrollJumpRef.current || programmaticScrollRef.current) {
       return;
     }
+
     if (el.scrollTop < bh - 1) {
       suppressScrollJumpRef.current = true;
       el.scrollTop += bh;
@@ -166,14 +177,16 @@ export function CycleSelect<T extends string>({
       if (disabled || n === 0) {
         return;
       }
+
       const list = listRef.current;
       const prevVal = options[safeIndex]!.value;
       const prevEl = list
         ? findScrollTargetEl(list, String(prevVal), 0, null)
         : null;
-      previousSelectedElRef.current = prevEl;
 
+      previousSelectedElRef.current = prevEl;
       lastNavDirectionRef.current = delta > 0 ? 1 : -1;
+
       const next = (safeIndex + delta + n) % n;
       onChange(options[next]!.value);
     },
@@ -184,6 +197,7 @@ export function CycleSelect<T extends string>({
     if (disabled) {
       return;
     }
+
     if (e.key === "ArrowDown") {
       e.preventDefault();
       cycle(1);
@@ -216,9 +230,11 @@ export function CycleSelect<T extends string>({
   React.useLayoutEffect(() => {
     const list = listRef.current;
     const bh = measureBlockHeight();
+
     if (!list || !bh || n <= 1) {
       return;
     }
+
     if (!initializedScrollRef.current) {
       list.scrollTop = bh;
       initializedScrollRef.current = true;
@@ -227,6 +243,7 @@ export function CycleSelect<T extends string>({
 
   React.useLayoutEffect(() => {
     const list = listRef.current;
+
     if (!list || n === 0) {
       return;
     }
@@ -250,8 +267,6 @@ export function CycleSelect<T extends string>({
 
       programmaticScrollRef.current = true;
 
-      // Calculate where the target currently is in the scroll content,
-      // then figure out what scrollTop would place it at the visible center.
       const targetContentTop = getContentTop(target, list);
       const targetMid = targetContentTop + target.offsetHeight / 2;
       const visibleMid = list.clientHeight / 2;
@@ -267,7 +282,9 @@ export function CycleSelect<T extends string>({
           list.removeEventListener("scrollend", onScrollEnd);
           finishProgrammaticScroll();
         };
+
         list.addEventListener("scrollend", onScrollEnd, { once: true });
+
         scrollSettleTimeoutRef.current = setTimeout(() => {
           list.removeEventListener("scrollend", onScrollEnd);
           finishProgrammaticScroll();
@@ -283,15 +300,18 @@ export function CycleSelect<T extends string>({
   React.useEffect(() => {
     const list = listRef.current;
     const block = blockRef.current;
+
     if (!list || !block || n <= 1) {
       return;
     }
+
     const ro = new ResizeObserver(() => {
       measureBlockHeight();
       if (!programmaticScrollRef.current) {
         applyInfiniteScrollJump();
       }
     });
+
     ro.observe(block);
     return () => ro.disconnect();
   }, [applyInfiniteScrollJump, measureBlockHeight, n]);
@@ -300,10 +320,12 @@ export function CycleSelect<T extends string>({
     if (disabled || n <= 1) {
       return;
     }
+
     const el = listRef.current;
     if (!el) {
       return;
     }
+
     const bh = blockHeightRef.current;
     if (bh <= 0) {
       return;
@@ -353,7 +375,7 @@ export function CycleSelect<T extends string>({
   return (
     <div
       className={cn(
-        "flex w-full max-w-full flex-col overflow-hidden rounded-frame border-retro border-foreground bg-background shadow-retro-sm",
+        "flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden rounded-frame border-retro border-foreground bg-background shadow-retro-sm",
         disabled && "pointer-events-none opacity-50",
         className,
       )}
@@ -367,7 +389,7 @@ export function CycleSelect<T extends string>({
         disabled={disabled}
         onClick={() => cycle(-1)}
         className={cn(
-          "flex h-12 w-full shrink-0 items-center justify-center border-b-retro border-foreground transition-colors cursor-pointer",
+          "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center border-b-retro border-foreground transition-colors",
           "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
           "focus-visible:ring-4 focus-visible:ring-ring/30 focus-visible:ring-inset outline-none",
         )}
@@ -379,7 +401,8 @@ export function CycleSelect<T extends string>({
         ref={listRef}
         onScroll={onListScroll}
         onWheel={handleListWheel}
-        className="max-h-[min(52vh,22rem)] min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-2 py-2 [scrollbar-gutter:stable]"
+        style={viewportHeight > 0 ? { height: viewportHeight } : undefined}
+        className="min-h-0 w-full overflow-y-auto overscroll-y-contain px-2 py-2 [scrollbar-gutter:stable]"
       >
         <div className="flex flex-col gap-4 px-2">
           {loops.map((loop) => (
@@ -391,6 +414,7 @@ export function CycleSelect<T extends string>({
               {options.map((option) => {
                 const isSelected = option.value === resolvedValue;
                 const isA11yBlock = loop === MIDDLE_LOOP;
+
                 return (
                   <button
                     key={`${loop}-${String(option.value)}`}
@@ -402,8 +426,8 @@ export function CycleSelect<T extends string>({
                     disabled={disabled}
                     onClick={() => handleOptionClick(option.value)}
                     className={cn(
-                      "flex w-full items-center px-4 py-4 text-left font-display text-2xl tracking-display cursor-pointer sm:py-5 sm:text-3xl",
-                      "focus-visible:ring-4 focus-visible:ring-ring/30 outline-none rounded-poster border-2 will-change-[transform,box-shadow]",
+                      "flex w-full cursor-pointer items-center rounded-poster border-2 px-4 py-4 text-left font-display text-2xl tracking-display outline-none will-change-[transform,box-shadow] sm:py-5 sm:text-3xl",
+                      "focus-visible:ring-4 focus-visible:ring-ring/30",
                       "motion-reduce:transition-none",
                       transitionClass,
                       "transition-[background-color,border-color,box-shadow,color,transform]",
@@ -427,7 +451,7 @@ export function CycleSelect<T extends string>({
         disabled={disabled}
         onClick={() => cycle(1)}
         className={cn(
-          "flex h-12 w-full shrink-0 items-center justify-center border-t-retro border-foreground transition-colors cursor-pointer",
+          "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center border-t-retro border-foreground transition-colors",
           "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
           "focus-visible:ring-4 focus-visible:ring-ring/30 focus-visible:ring-inset outline-none",
         )}
