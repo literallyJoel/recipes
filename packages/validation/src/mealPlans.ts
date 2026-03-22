@@ -15,7 +15,15 @@ export const createMealPlanSchema = type({
   "nutritionalTarget?": stubSchema(nutritionalTargetSchema),
 });
 
-export const updateMealPlanSchema = createMealPlanSchema.partial();
+export const updateMealPlanSchema = type({
+  "label?": "string | null",
+  "startDate?": "Date",
+  "endDate?": "Date",
+  "config?": "string.json",
+  "user?": stubSchema(userSchema),
+  "store?": stubSchema(storeSchema).or("null"),
+  "nutritionalTarget?": stubSchema(nutritionalTargetSchema).or("null"),
+});
 
 export const mealPlanSchema = createMealPlanSchema.and(serverGeneratedFields);
 
@@ -33,7 +41,15 @@ export const createMealPlanEntrySchema = type({
   nutritionSnapshot: "string.json",
 });
 
-export const updateMealPlanEntrySchema = createMealPlanEntrySchema.partial();
+export const updateMealPlanEntrySchema = type({
+  "mealPlan?": stubSchema(mealPlanSchema),
+  "recipe?": stubSchema(recipeSchema),
+  "date?": "Date",
+  "mealType?": mealTypeSchema,
+  "servings?": "number > 0",
+  "order?": "number.integer",
+  "nutritionSnapshot?": "string.json | null",
+});
 
 export const mealPlanEntrySchema = createMealPlanEntrySchema.and({
   id: "string.uuid",

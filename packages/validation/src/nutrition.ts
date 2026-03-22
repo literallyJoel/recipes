@@ -13,8 +13,16 @@ export const createNutritionalTargetSchema = type({
   isDefault: "boolean",
 });
 
-export const updateNutritionalTargetSchema =
-  createNutritionalTargetSchema.partial();
+export const updateNutritionalTargetSchema = type({
+  "label?": "string",
+  "user?": stubSchema(userSchema),
+  "calories?": "number | null",
+  "protein?": "number | null",
+  "carbs?": "number | null",
+  "fat?": "number | null",
+  "fibre?": "number | null",
+  "isDefault?": "boolean",
+});
 
 export const nutritionalTargetSchema = createNutritionalTargetSchema.and(
   serverGeneratedFields,
