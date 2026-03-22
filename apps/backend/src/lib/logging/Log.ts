@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { inspect } from "node:util";
+import { serializeError } from "../errors/AppError";
 
 type Meta = Record<string, unknown>;
 type LogLevel = "info" | "warn" | "error" | "debug";
@@ -129,7 +130,7 @@ function formatTimestamp(isoTimestamp: string): string {
 }
 
 function formatMeta(meta: Meta): string {
-  const formatted = inspect(meta, {
+  const formatted = inspect(normalizeMeta(meta), {
     colors: true,
     depth: 6,
     compact: false,
@@ -140,6 +141,35 @@ function formatMeta(meta: Meta): string {
     .split("\n")
     .map((line) => `  ${chalk.dim("meta")} ${line}`)
     .join("\n");
+}
+
+function normalizeMeta(meta: Meta): Meta {
+  return Object.fromEntries(
+    Object.entries(meta).map(([key, value]) => [key, normalizeMetaValue(value)]),
+  );
+}
+
+function normalizeMetaValue(value: unknown): unknown {
+  if (value instanceof Error) {
+    return serializeError(value, {
+      includeStack: process.env.NODE_ENV !== "production",
+    });
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((entry) => normalizeMetaValue(entry));
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entryValue]) => [
+        key,
+        normalizeMetaValue(entryValue),
+      ]),
+    );
+  }
+
+  return value;
 }
 
 export const Log = {
