@@ -1,6 +1,6 @@
 import type { Recipe } from "@jvrecipes/validation";
 
-export const recentRecipesMock: Recipe[] = [
+export const recipesMock: Recipe[] = [
   {
     id: "11111111-1111-4111-8111-111111111111",
     createdAt: new Date("2026-03-18T09:30:00Z"),

@@ -58,9 +58,9 @@ const RecipeCard = ({ recipe }: RecipeCard) => {
       <Card
         key={recipe.id}
         variant="retro"
-        className="group flex min-h-56 flex-col justify-between rounded-retro border-retro bg-card p-5 font-display shadow-retro-sm transition-transform duration-150 hover:-translate-y-1"
+        className="group flex min-h-20 flex-col justify-between rounded-retro border-retro bg-card p-5 font-display shadow-retro-sm transition-transform duration-150 hover:-translate-y-1"
       >
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-2">
               <h3 className="line-clamp-2 text-xl leading-tight tracking-display text-card-foreground">

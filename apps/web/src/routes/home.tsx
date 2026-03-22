@@ -3,10 +3,10 @@ import { useState } from "react";
 import SplitView from "@/components/shared/SplitView";
 import { CycleSelect } from "@/components/ui/cycle-select";
 import { useRequireAuth } from "@/lib/auth-guards";
-import RecentRecipes from "@/components/home/Panels/RecentRecipes";
+import Recipes from "@/components/home/Panels/Recipes";
+import { recipesMock } from "@/dev/dummy";
 
 const HOME_SECTIONS = [
-  { value: "recent", label: "Recent Recipes" },
   { value: "diary", label: "Diary" },
   { value: "meal-plans", label: "Meal Plans" },
   { value: "your", label: "Your Recipes" },
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/home")({
 
 function HomePage() {
   const { redirect } = useRequireAuth("/login");
-  const [section, setSection] = useState<HomeSection>("recent");
+  const [section, setSection] = useState<HomeSection>("your");
 
   if (redirect) {
     return redirect;
@@ -29,8 +29,10 @@ function HomePage() {
 
   function getActiveSection() {
     switch (section) {
-      case "recent":
-        return <RecentRecipes />;
+      case "your":
+        return <Recipes recipes={recipesMock} allLink="/recipes" showCreate/>;
+      case "shared":
+        return <Recipes recipes={recipesMock} allLink="/recipes/shared" />;
       default:
         return null;
     }
