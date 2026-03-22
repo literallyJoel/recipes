@@ -55,6 +55,7 @@
         "arktype": "^2.1.29",
       },
       "devDependencies": {
+        "@types/bun": "^1.2.21",
         "typescript": "^5.9.2",
       },
     },
