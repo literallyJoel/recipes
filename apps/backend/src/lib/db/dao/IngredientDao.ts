@@ -77,36 +77,6 @@ export class IngredientDao extends BaseDao<
 }
 
 /**
- * Flatten ingredient record fields into the row-oriented shape expected by the
- * ingredients table.
- */
-function mapIngredientRow(
-  input: Omit<IngredientRecord, "id" | "createdAt" | "updatedAt"> | Partial<Omit<IngredientRecord, "id" | "createdAt" | "updatedAt">>,
-) {
-  return {
-    storeId: input.storeId,
-    ingredientTagId: input.ingredientTagId,
-    name: input.name,
-    brand: input.brand,
-    priceAmount: input.priceAmount,
-    priceCurrency: input.priceCurrency,
-    packageSize: input.packageSize,
-    packageUnit: input.packageUnit,
-    url: input.url,
-    baseUnit: input.baseUnit,
-    customUnitDefinition: input.customUnitDefinition,
-    energy: input.nutrition?.energy,
-    fat: input.nutrition?.fat,
-    saturates: input.nutrition?.saturates,
-    carbohydrates: input.nutrition?.carbohydrates,
-    sugars: input.nutrition?.sugars,
-    fibre: input.nutrition?.fibre,
-    protein: input.nutrition?.protein,
-    salt: input.nutrition?.salt,
-  };
-}
-
-/**
  * Rebuild the compact nutrition object from nullable nutrient columns.
  * Returns `undefined` when no nutrient values are present.
  */

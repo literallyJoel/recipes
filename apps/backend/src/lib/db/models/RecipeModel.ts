@@ -146,17 +146,19 @@ export class RecipeModel extends BaseModel {
       this.client,
     );
 
-    const ingredientIds = recipeIngredients.map((item) => item.ingredientId);
+    const dedupedIngredientIds = Array.from(
+      new Set(recipeIngredients.map((item) => item.ingredientId)),
+    );
 
     const ingredients =
-      ingredientIds.length === 0
+      dedupedIngredientIds.length === 0
         ? []
         : await ingredientDao.read(
             {
               where: {
                 field: "id",
                 op: "in",
-                value: ingredientIds,
+                value: dedupedIngredientIds,
               },
             },
             this.client,
@@ -265,16 +267,7 @@ function hydrateRecipeIngredients(
         notes: item.notes,
         order: item.order,
         ingredient: {
-          id: ingredient.id,
-          name: ingredient.name,
-          brand: ingredient.brand,
-          priceAmount: ingredient.priceAmount,
-          priceCurrency: ingredient.priceCurrency,
-          packageSize: ingredient.packageSize,
-          url: ingredient.url,
-          nutrition: ingredient.nutrition,
-          createdAt: ingredient.createdAt,
-          updatedAt: ingredient.updatedAt,
+          ...ingredient,
         },
       },
     ];
