@@ -7,7 +7,7 @@ type SplitShellProps = {
   children: ReactNode;
 };
 
-export const SplitShell = ({ aside, children }: SplitShellProps) => {
+export const SplitOpposites = ({ aside, children }: SplitShellProps) => {
   return (
     <main className="bg-background text-foreground min-h-screen">
       <div className="mx-auto flex min-h-screen max-w-7xl items-center px-5 pt-24 pb-8 sm:px-8 lg:px-10">

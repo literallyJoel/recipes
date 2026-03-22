@@ -10,6 +10,7 @@ import { authClient } from "@/lib/auth-client";
 import { ChevronDown } from "lucide-react";
 
 export const UserPanel = () => {
+  const signOut = authClient.signOut;
   const { data: session, isPending } = authClient.useSession();
   const name = session?.user.name?.trim() || "Your Account";
   const initials =
@@ -25,9 +26,11 @@ export const UserPanel = () => {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label={session ? `Open account menu for ${name}` : "Open account menu"}
+          aria-label={
+            session ? `Open account menu for ${name}` : "Open account menu"
+          }
           aria-busy={isPending}
-          className="relative inline-flex items-center gap-3 rounded-full border-retro border-foreground bg-background px-2 py-1.5 pr-10 shadow-retro-sm"
+          className="relative inline-flex items-center gap-3 cursor-pointer rounded-full border-retro border-foreground bg-background px-2 py-1.5 pr-10 shadow-retro-sm"
         >
           {session?.user.image ? (
             <img
@@ -35,7 +38,11 @@ export const UserPanel = () => {
               src={session.user.image}
               width={40}
               height={40}
-              alt={session.user.name ? `${session.user.name} profile picture` : "Your profile picture"}
+              alt={
+                session.user.name
+                  ? `${session.user.name} profile picture`
+                  : "Your profile picture"
+              }
             />
           ) : (
             <div className="bg-accent text-accent-foreground flex size-10 items-center justify-center rounded-full border-2 border-foreground">
@@ -66,7 +73,10 @@ export const UserPanel = () => {
           <DropdownMenuLabel>General</DropdownMenuLabel>
           <DropdownMenuItem>My Account</DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem className="focus:bg-destructive">
+          <DropdownMenuItem
+            onClick={() => signOut()}
+            className="focus:bg-destructive"
+          >
             Sign Out
           </DropdownMenuItem>
         </DropdownMenuGroup>

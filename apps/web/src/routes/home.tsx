@@ -1,8 +1,19 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import SplitView from "@/components/shared/SplitView";
+import { CycleSelect } from "@/components/ui/cycle-select";
 import { useRequireAuth } from "@/lib/auth-guards";
+import RecentRecipes from "@/components/home/Panels/RecentRecipes";
+
+const HOME_SECTIONS = [
+  { value: "recent", label: "Recent Recipes" },
+  { value: "diary", label: "Diary" },
+  { value: "meal-plans", label: "Meal Plans" },
+  { value: "your", label: "Your Recipes" },
+  { value: "shared", label: "Shared Recipes" },
+] as const;
+
+type HomeSection = (typeof HOME_SECTIONS)[number]["value"];
 
 export const Route = createFileRoute("/home")({
   component: HomePage,
@@ -10,31 +21,37 @@ export const Route = createFileRoute("/home")({
 
 function HomePage() {
   const { redirect } = useRequireAuth("/login");
+  const [section, setSection] = useState<HomeSection>("recent");
 
   if (redirect) {
     return redirect;
   }
 
-  return (
-    <main className="bg-background text-foreground min-h-screen">
-      <div className="mx-auto flex min-h-screen max-w-7xl items-center px-5 pt-24 pb-8 sm:px-8 lg:px-10">
-        <Card variant="frame" className="w-full p-8 sm:p-10 lg:p-14">
-          <CardHeader className="space-y-3">
-            <p className="text-muted-foreground text-sm font-semibold uppercase tracking-kicker">
-              Home
-            </p>
-            <CardTitle className="font-display text-5xl leading-none tracking-display sm:text-6xl">
-              Home
-            </CardTitle>
-          </CardHeader>
+  function getActiveSection() {
+    switch (section) {
+      case "recent":
+        return <RecentRecipes />;
+      default:
+        return null;
+    }
+  }
 
-          <CardContent className="mt-8">
-            <Button variant="retro" asChild>
-              <Link to="/login">Back to login</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+  return (
+    <SplitView
+      asideClassName="col-span-3"
+      aside={
+        <div className="w-full max-w-full">
+          <CycleSelect
+            aria-label="Home section"
+            options={[...HOME_SECTIONS]}
+            value={section}
+            onChange={setSection}
+            className="w-full max-w-full px-1"
+          />
+        </div>
+      }
+    >
+      {getActiveSection()}
+    </SplitView>
   );
 }

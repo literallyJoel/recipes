@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import GoogleLogo from "@/assets/svg/Google.svg";
-import { SplitShell } from "@/components/shared/SplitShell";
+import { SplitOpposites } from "@/components/shared/SplitOpposites";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
@@ -24,7 +24,7 @@ function LoginPage() {
   };
 
   return (
-    <SplitShell
+    <SplitOpposites
       aside={
         <div className="space-y-3">
           <h1 className="font-display max-w-3xl text-5xl leading-none tracking-display text-balance sm:text-6xl lg:text-7xl">
@@ -64,6 +64,6 @@ function LoginPage() {
           </Button>
         </CardContent>
       </Card>
-    </SplitShell>
+    </SplitOpposites>
   );
 }
