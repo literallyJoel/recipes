@@ -92,7 +92,7 @@ function serializeErrorInternal(
       name: error.name,
       message: error.message,
       code: error.code,
-      data: safeSerializeData(error.data, includeStack, seen),
+      data: sanitizeData(error.data, includeStack, seen),
       stack: includeStack ? error.stack : undefined,
       cause:
         error.cause === undefined
@@ -116,18 +116,10 @@ function serializeErrorInternal(
   return {
     name: "NonErrorThrown",
     message: "A non-Error value was thrown",
-    data: safeSerializeData({
+    data: sanitizeData({
       value: error,
     }, includeStack, seen),
   };
-}
-
-function safeSerializeData(
-  value: unknown,
-  includeStack: boolean,
-  seen: WeakSet<object>,
-): unknown {
-  return sanitizeData(value, includeStack, seen);
 }
 
 function sanitizeData(
