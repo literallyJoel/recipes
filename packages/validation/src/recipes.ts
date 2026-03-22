@@ -38,12 +38,7 @@ export const recipeSchema = createRecipeSchema
   .and({ user: stubSchema(userSchema) })
   .and({ "ingredients?": recipeIngredientSchema.array() });
 
-export const sharedRecipeSchema = recipeSchema.and({
-  sharedByUser: stubSchema(userSchema),
-});
-
 export type CreateRecipe = typeof createRecipeSchema.infer;
 export type UpdateRecipe = typeof updateRecipeSchema.infer;
 export type RecipeIngredient = typeof recipeIngredientSchema.infer;
 export type Recipe = typeof recipeSchema.infer;
-export type SharedRecipe = typeof sharedRecipeSchema.infer;
