@@ -4,7 +4,7 @@ export const mealPlanDbRowSchema = type({
   id: "string.uuid",
   userId: "string",
   "nutritionalTargetId?": "string.uuid | null",
-  "storedId?": "string.uuid | null",
+  "storeId?": "string.uuid | null",
   "label?": "string | null",
   startDate: "string.date",
   endDate: "string.date",

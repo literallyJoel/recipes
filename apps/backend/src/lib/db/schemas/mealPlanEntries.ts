@@ -3,7 +3,7 @@ import { mealTypeSchema } from "packages/validation/src/common";
 
 export const mealPlanEntryDbRowSchema = type({
   id: "string.uuid",
-  mealPLanId: "string.uuid",
+  mealPlanId: "string.uuid",
   recipeId: "string.uuid",
   date: "string.date",
   mealType: mealTypeSchema,

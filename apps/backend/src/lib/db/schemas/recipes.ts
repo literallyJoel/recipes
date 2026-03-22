@@ -1,7 +1,7 @@
 import { type } from "arktype";
 
 export const recipeDBRowSchema = type({
-  id: "string",
+  id: "string.uuid",
   userId: "string",
   title: "string",
   "description?": "string | null",
