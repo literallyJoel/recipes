@@ -20,14 +20,14 @@ export type IngredientTag = typeof ingredientTagSchema.infer;
 // Ingredients
 
 export const ingredientNutritionSchema = type({
-  energy: "number",
-  fat: "number",
-  saturates: "number",
-  carbohydrates: "number",
-  sugars: "number",
-  fibre: "number",
-  protein: "number",
-  salt: "number",
+  energy: "number | null",
+  fat: "number | null",
+  saturates: "number | null",
+  carbohydrates: "number | null",
+  sugars: "number | null",
+  fibre: "number | null",
+  protein: "number | null",
+  salt: "number | null",
 }).partial();
 
 export const createIngredientSchema = type({
