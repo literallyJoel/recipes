@@ -30,7 +30,7 @@ class Cache {
   async compute<T>(key: string, callback: () => T, ttl?: number) {
     let value: T | null = null;
 
-    if (!env.ENABLE_CACHE) {
+    if (env.ENABLE_CACHE) {
       value = await this.get(key);
       if (value !== null) return value;
     }
