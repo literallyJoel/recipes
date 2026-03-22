@@ -27,7 +27,7 @@ describe("Cache", () => {
     redis.get = mock(async () => JSON.stringify({ title: "Pasta" }));
     const cache = new Cache();
 
-    expect(cache.get<{ title: string }>("recipe:1")).resolves.toEqual({
+    await expect(cache.get<{ title: string }>("recipe:1")).resolves.toEqual({
       title: "Pasta",
     });
   });
@@ -39,7 +39,7 @@ describe("Cache", () => {
     Log.warn = warn;
     const cache = new Cache();
 
-    expect(cache.get("recipe:2")).resolves.toBeNull();
+    await expect(cache.get("recipe:2")).resolves.toBeNull();
     expect(redis.del).toHaveBeenCalledWith("recipe:2");
     expect(warn).toHaveBeenCalledWith(
       "Failed to parse cached value as JSON",
