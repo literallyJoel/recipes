@@ -199,13 +199,13 @@ export class RecipeModel extends BaseModel {
                 sr."createdAt" AS "sharedCreatedAt",
                 ou."name" AS "userName",
                 ou."image" AS "userImage",
-           FROM "shared_recipes" sr,
+           FROM "shared_recipes" sr
      INNER JOIN "recipes" r
              ON r."id" = sr."recipeId"
      INNER JOIN "user" ou
              ON ou."id" = r."userId"
           WHERE ${conditions.join(" AND ")}
-       ORDER BY r."updatedAt" desc,
+       ORDER BY r."updatedAt" desc
                 ${limitClause}`,
       values,
       this.client,
