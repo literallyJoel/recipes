@@ -208,7 +208,7 @@ export class RecipeModel extends BaseModel {
                 sr."canEdit" AS "sharedCanEdit",
                 sr."createdAt" AS "sharedCreatedAt",
                 ou."name" AS "userName",
-                ou."image" AS "userImage",
+                ou."image" AS "userImage"
            FROM "shared_recipes" sr
      INNER JOIN "recipes" r
              ON r."id" = sr."recipeId"
