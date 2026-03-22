@@ -1,8 +1,19 @@
-import { serve, sql } from "bun";
+import { serve } from "bun";
 import index from "../../web/index.html";
 import { getRoutes } from "@literallyjoel/router";
 import { join } from "path";
+import { buildErrorLogContext } from "./lib/errors";
 import { Log } from "./lib/logging/Log";
+
+process.on("uncaughtException", (error) => {
+  Log.error("Uncaught exception", buildErrorLogContext(error));
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  Log.error("Unhandled promise rejection", buildErrorLogContext(reason));
+  process.exit(1);
+});
 
 const routes = await getRoutes({
   routesDirectory: join(import.meta.dir, "routes"),

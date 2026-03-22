@@ -1,5 +1,7 @@
 import { redis as client } from "bun";
 import env from "../env";
+import { ExternalServiceError } from "./errors";
+import { Log } from "./logging/Log";
 
 class Cache {
   async get<T>(key: string): Promise<T | null> {
@@ -9,11 +11,38 @@ class Cache {
       if (raw === null) return null;
       try {
         return JSON.parse(raw) as T;
-      } catch {
-        return raw as T;
+      } catch (error) {
+        Log.warn("Failed to parse cached value as JSON", {
+          key,
+          error,
+        });
+        await this.delete(key);
+        return null;
       }
-    } catch {
+    } catch (error) {
+      Log.warn("Cache read failed", {
+        key,
+        error: new ExternalServiceError("Failed to read from Redis", {
+          data: { key },
+          cause: error,
+        }),
+      });
       return null;
+    }
+  }
+
+  async delete(key: string): Promise<void> {
+    if (!env.ENABLE_CACHE) return;
+    try {
+      await client.del(key);
+    } catch (error) {
+      Log.warn("Cache delete failed", {
+        key,
+        error: new ExternalServiceError("Failed to delete from Redis", {
+          data: { key },
+          cause: error,
+        }),
+      });
     }
   }
 
@@ -22,8 +51,15 @@ class Cache {
     try {
       await client.set(key, JSON.stringify(value));
       if (ttl !== undefined) await client.expire(key, ttl);
-    } catch {
-      // Fail open: cache should not break the primary code path.
+    } catch (error) {
+      Log.warn("Cache write failed", {
+        key,
+        ttl,
+        error: new ExternalServiceError("Failed to write to Redis", {
+          data: { key, ttl },
+          cause: error,
+        }),
+      });
     }
   }
 

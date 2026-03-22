@@ -1,4 +1,5 @@
 import type { Recipe, RecipeIngredient } from "@jvrecipes/validation";
+import { InternalError } from "../../errors";
 import { queryDb } from "../client";
 import { ingredientDao, type IngredientRecord } from "../dao/IngredientDao";
 import { recipeDao } from "../dao/RecipeDao";
@@ -95,8 +96,15 @@ export class RecipeModel extends BaseModel {
     );
 
     if (!recipe) {
-      throw new Error(
+      throw new InternalError(
         `Failed to reload recipe "${createdRecipe.id}" after creation`,
+        {
+          code: "RECIPE_RELOAD_FAILED",
+          data: {
+            recipeId: createdRecipe.id,
+            userId,
+          },
+        },
       );
     }
 

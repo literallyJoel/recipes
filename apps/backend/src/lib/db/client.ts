@@ -1,4 +1,5 @@
 import { sql } from "bun";
+import { AppError, DatabaseError } from "../errors";
 
 /**
  * Generic row shape used by the lightweight SQL helpers.
@@ -27,7 +28,18 @@ export async function queryDb<TRow extends DbRow>(
   client: DatabaseClient = db,
 ): Promise<TRow[]> {
   const [strings, interpolatedValues] = toTemplateLiteral(query, values);
-  return await client<TRow[]>(strings, ...interpolatedValues);
+
+  try {
+    return await client<TRow[]>(strings, ...interpolatedValues);
+  } catch (error) {
+    throw new DatabaseError("Database query failed", {
+      data: {
+        query,
+        parameterCount: values.length,
+      },
+      cause: error,
+    });
+  }
 }
 
 /**
@@ -36,7 +48,15 @@ export async function queryDb<TRow extends DbRow>(
 export async function withTransaction<TResult>(
   run: (client: Bun.TransactionSQL) => Promise<TResult>,
 ): Promise<TResult> {
-  return await db.begin(async (transaction) => await run(transaction));
+  try {
+    return await db.begin(async (transaction) => await run(transaction));
+  } catch (error) {
+    if (error instanceof DatabaseError || error instanceof AppError) {
+      throw error;
+    }
+
+    throw new DatabaseError("Database transaction failed", { cause: error });
+  }
 }
 
 /**
