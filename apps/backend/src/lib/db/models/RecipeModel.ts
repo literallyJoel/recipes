@@ -292,5 +292,5 @@ function buildLimitClause(
   }
 
   values.push(limit);
-  return `limit $${values.length}`;
+  return ` limit $${values.length}`;
 }
