@@ -54,8 +54,11 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
   };
 
   return (
-    // @ts-ignore I haven't done this page yet
-    <Link to={`/recipes/${recipe.id}`} className="block h-full">
+    <Link
+      to={`/recipes/$id`}
+      params={{ id: recipe.id }}
+      className="block h-full"
+    >
       <Card
         key={recipe.id}
         variant="retro"
