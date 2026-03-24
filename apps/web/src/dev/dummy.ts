@@ -25,8 +25,6 @@ export const recipesMock: Recipe[] = [
     createdAt: new Date("2026-03-17T18:45:00Z"),
     updatedAt: new Date("2026-03-17T18:45:00Z"),
     title: "Spicy Chicken Rice Bowl",
-    description:
-      "A balanced bowl with tender chicken, rice, and a spicy sauce.",
     instructions:
       "Cook the rice, pan-fry seasoned chicken, and serve with vegetables and sauce.",
     servings: 3,
@@ -126,7 +124,7 @@ export const recipeWithIngredients = {
   title: "Creamy Garlic Pasta",
   description: "Quick, comforting pasta with a silky garlic-parmesan sauce.",
   instructions:
-    "Boil pasta, make the sauce with garlic, cream, and parmesan, then toss together.",
+    "Bring a large pan of well-salted water to the boil. Add the spaghetti and cook until al dente according to the packet instructions.\n\nBefore draining, reserve about 200ml of the pasta water. Drain the pasta and set aside.\n\nMeanwhile, heat the olive oil in a large frying pan over a medium-low heat. Add the minced garlic and cook gently for 1-2 minutes until fragrant, stirring often so it doesn’t brown.\n\nPour in the double cream and stir to combine. Let it come to a gentle simmer, then add the grated parmesan a handful at a time, stirring until the sauce is smooth.\n\nAdd the cooked pasta to the sauce and toss well to coat. Stir in a splash of the reserved pasta water until the sauce is silky and clings to the pasta.\n\nSeason with salt and freshly ground black pepper to taste. Serve straight away, with extra parmesan if you like.",
   servings: 2,
   prepMins: 10,
   cookMins: 15,
