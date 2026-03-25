@@ -73,10 +73,10 @@ const RecipesToolbar = ({
         type="button"
         onClick={() => onTimeFilterChange(timeFilter === "30" ? null : "30")}
         className={cn(
-          "border-retro cursor-pointer rounded-full px-4 py-2 text-2xs font-semibold uppercase tracking-meta shadow-retro-sm transition-all",
+          "border-retro border-foreground border-3 cursor-pointer rounded-full px-4 py-2 text-2xs font-semibold uppercase tracking-wider shadow-retro-sm transition-all",
           timeFilter === "30"
-            ? "bg-primary text-primary-foreground border-foreground"
-            : "bg-secondary border-foreground text-muted-foreground hover:text-foreground hover:bg-primary/50",
+            ? "bg-primary text-primary-foreground"
+            : "bg-card text-foreground hover:text-primary-foreground hover:bg-primary",
         )}
       >
         Under 30m
@@ -86,10 +86,10 @@ const RecipesToolbar = ({
         type="button"
         onClick={() => onTimeFilterChange(timeFilter === "60" ? null : "60")}
         className={cn(
-          "border-retro cursor-pointer rounded-full px-4 py-2 text-2xs font-semibold uppercase tracking-meta shadow-retro-sm transition-all",
+          "border-retro border-foreground border-3 cursor-pointer rounded-full px-4 py-2 text-2xs font-semibold uppercase tracking-wider shadow-retro-sm transition-all",
           timeFilter === "60"
-            ? "bg-primary text-primary-foreground border-foreground"
-            : "bg-secondary border-foreground text-muted-foreground hover:text-foreground hover:bg-primary/50",
+            ? "bg-primary text-primary-foreground"
+            : "bg-card text-foreground hover:text-primary-foreground hover:bg-primary",
         )}
       >
         Under 60m
