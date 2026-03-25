@@ -53,6 +53,7 @@ const IngredientSection = ({
             ← Back
           </Link>
 
+          {/*@ts-ignore this route isn't implemented yet */}
           <Link to="./edit" variant="retro" className="text-xs">
             Edit Recipe
           </Link>
@@ -124,35 +125,37 @@ const IngredientSection = ({
 
       <div className="flex-1 max-h-52 min-h-0 overflow-y-auto -mx-2 px-2">
         <div className="flex flex-col gap-1">
-          {recipe.ingredients?.map(({ id, ingredient, quantity, quantityUnit, notes }) => {
-            const checked = checkedIngredients.has(id);
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => toggleIngredient(id)}
-                className={cn(
-                  "flex items-start gap-3 w-full text-left px-3 py-2.5 rounded-poster border-2 border-transparent cursor-pointer transition-all",
-                  checked
-                    ? "opacity-40 line-through"
-                    : "hover:bg-primary/40 hover:border-foreground/30",
-                )}
-              >
-                <span className="text-xs font-bold text-accent min-w-14 text-right shrink-0 pt-px">
-                  {formatQuantity(quantity, quantityUnit)}
-                </span>
-                <span className="text-sm text-primary-foreground">
-                  {ingredient.name}
-                  {notes && (
-                    <span className="text-primary-foreground/75 italic font-normal">
-                      {" "}
-                      — {notes}
-                    </span>
+          {recipe.ingredients?.map(
+            ({ id, ingredient, quantity, quantityUnit, notes }) => {
+              const checked = checkedIngredients.has(id);
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => toggleIngredient(id)}
+                  className={cn(
+                    "flex items-start gap-3 w-full text-left px-3 py-2.5 rounded-poster border-2 border-transparent cursor-pointer transition-all",
+                    checked
+                      ? "opacity-40 line-through"
+                      : "hover:bg-primary/40 hover:border-foreground/30",
                   )}
-                </span>
-              </button>
-            );
-          })}
+                >
+                  <span className="text-xs font-bold text-accent min-w-14 text-right shrink-0 pt-px">
+                    {formatQuantity(quantity, quantityUnit)}
+                  </span>
+                  <span className="text-sm text-primary-foreground">
+                    {ingredient.name}
+                    {notes && (
+                      <span className="text-primary-foreground/75 italic font-normal">
+                        {" "}
+                        — {notes}
+                      </span>
+                    )}
+                  </span>
+                </button>
+              );
+            },
+          )}
         </div>
       </div>
     </div>

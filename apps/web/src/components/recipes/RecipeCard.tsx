@@ -3,12 +3,15 @@ import { Recipe } from "@jvrecipes/validation";
 
 import UserImage from "../shared/UserImage";
 import { Card } from "../ui/card";
+import { ClassNameValue } from "tailwind-merge";
+import { cn } from "@/lib/utils";
 
 interface RecipeCardProps {
   recipe: Recipe;
+  className?: ClassNameValue;
 }
 
-const RecipeCard = ({ recipe }: RecipeCardProps) => {
+const RecipeCard = ({ recipe, className }: RecipeCardProps) => {
   const getTotalTime = (recipe: Recipe) => {
     const prep = recipe.prepMins ?? 0;
     const cook = recipe.cookMins ?? 0;
@@ -57,7 +60,7 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
     <Link
       to={`/recipes/$id`}
       params={{ id: recipe.id }}
-      className="block h-full"
+      className={cn("block h-full", className)}
     >
       <Card
         key={recipe.id}
